@@ -1,0 +1,186 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+.header {
+    background-image: url('https://via.placeholder.com/1500x200');
+    background-size: cover;
+    color: white;
+    padding: 20px;
+    text-align: left;
+}
+.breadcrumb {
+    font-size: 14px;
+    margin-top: 10px;
+}
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+}
+.main-content {
+    width: 100%;
+}
+.form-content {
+    display: flex;
+    justify-content: space-between;
+}
+.steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.step {
+    width: 30%;
+    text-align: center;
+}
+.step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc;
+    color: white;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+.step.active .step-number {
+    background-color: #007bff;
+}
+.form-section {
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input[type="radio"] {
+    margin-right: 5px;
+}
+.form-group select, .form-group input[type="date"], .form-group input[type="datetime-local"] {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.field {
+    position: relative;
+}
+form {
+    width: 100%;
+}
+button, textarea {
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #C7C7C7;
+    background-color: #fafafa;
+    -webkit-transition: background-color .3s, border-color .4s;
+    -moz-transition: background-color .3s, border-color .4s;
+    -o-transition: background-color .3s, border-color .4s;
+    transition: background-color .3s, border-color .4s;
+}
+.name-fields, .address-fields, .location-fields {
+    display: flex;
+    justify-content: space-between;
+}
+.name-fields .form-group, .address-fields .form-group, .location-fields .form-group {
+    width: 48%;
+}
+.info-column {
+    width: 48%;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+.button {
+    background-color: #d4a017;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.time-slots {
+    margin-top: 10px;
+}
+
+.hour-container {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.hour-label {
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hour-label::after {
+    content: '▼';
+    font-size: 0.8em;
+}
+
+.hour-label.open::after {
+    content: '▲';
+}
+
+.minute-slots {
+    display: none;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.minute-slots.open {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.time-slot {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.time-slot input[type="radio"] {
+    display: none;
+}
+
+.time-slot.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.time-slot .availability {
+    margin-left: 10px;
+    font-size: 0.8em;
+    color: #666;
+}
+
+.time-slot.selected .availability {
+    color: #e0e0e0;
+}

@@ -1,0 +1,134 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f3f4f6;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.username {
+  margin: 0;
+  font-size: 16px;
+}
+
+.email {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.logout-btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.logout-btn:hover {
+  background-color: #2563eb;
+}
+
+.sidebar-nav {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb; /* Adding top border to create separation */
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 20px;
+  color: #374151;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.nav-link.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.nav-link:hover {
+  background-color: #e5e7eb;
+}
+
+.cardBox {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 50px;
+
+}
+
+.cardBox .card {
+position: relative;
+background: var(--white);
+padding: 20px;
+border-radius: 20px;
+display: flex;
+
+cursor: pointer;
+text-decoration: none;
+box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cardBox .card .cardName {
+position: relative;
+font-weight: 500;
+font-size: 2.0rem;
+color: var(--blue);
+}
+
+.cardBox .card .numbers {
+color: var(--black2);
+font-size: 1.1rem;
+margin-top: 5px;
+}
+
+.cardBox .card .iconBx {
+font-size: 3.5rem;
+color: var(--black2);
+}
+
+.cardBox .card:hover {
+background: var(--blue);
+}
+.cardBox .card:hover .numbers,
+.cardBox .card:hover .cardName,
+.cardBox .card:hover .iconBx {
+color: var(--white);
+}

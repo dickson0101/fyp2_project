@@ -1,0 +1,129 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f4f6;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f3f4f6;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    width: 50%;
+    display: flex;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+}
+
+.search-button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.date-container {
+    text-align: right;
+}
+
+.date-label {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.date-value {
+    margin: 0;
+    font-weight: bold;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #3b82f6;
+}
+
+.stat-label {
+    margin: 0;
+    color: #6b7280;
+}
+
+.appointments-sessions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.appointments-box, .sessions-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.box-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.box-description {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.appointments-table, .sessions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.appointments-table th, .sessions-table th {
+    text-align: left;
+    padding-bottom: 8px;
+    color: #6b7280;
+}
+
+.show-all-button {
+    width: 100%;
+    background-color: #3b82f6;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
