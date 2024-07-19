@@ -5,9 +5,9 @@ body {
     background-color: #f0f0f0;
 }
 .header {
-    background-image: url('https://via.placeholder.com/1500x200');
+    background-image: url('/images/appointment.jpg');
     background-size: cover;
-    color: white;
+    color: black;
     padding: 20px;
     text-align: left;
 }

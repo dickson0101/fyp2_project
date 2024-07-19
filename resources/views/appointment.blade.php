@@ -33,30 +33,40 @@
                 </div>
             </div>
 
+            <div id="requestSpeciality" class="form-group">
+                <label for="speciality">Speciality</label>
+                <select id="speciality" name="doctor-speciality" required>
+                    <option value="">Select a Speciality</option>
+                    <option value="cardiology">Cardiology</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="orthopedics">Orthopedics</option>
+                    <option value="urology">Urology</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Appointment Time</label>
+                <div id="timeSlots" class="time-slots">
+                    <!-- Time slots will be dynamically generated here -->
+                </div>
+            </div>
+
             <div class="form-section">
-                <h2>CHOOSE THE DOCTOR:</h2>
                 <div class="form-group" id="doctor-choice-group">
-                   
-                
+                    <label>
+                        <input class="form-control" type="radio" name="doctor-choice" value="recent" required> Recent Doctor
+                    </label>
                     <label>
                         <input class="form-control" type="radio" name="doctor-choice" value="choose" required> Choose My Doctor
                     </label>
                 </div>
-
-                <div id="requestSpeciality" class="form-group">
-                    <label for="speciality">Speciality</label>
-                    <select id="speciality" name="doctor-speciality" required>
-                        <option value="cardiology">Cardiology</option>
-                        <option value="neurology">Neurology</option>
-                        <option value="orthopedics">Orthopedics</option>
-                        <option value="urology">Urology</option>
+                <div class="form-group" id="doctor-select-group">
+                    <label for="doctor">Select Doctor</label>
+                    <select id="doctor" name="doctor" disabled>
+                        <option value="">Empty</option>
                     </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Appointment Time</label>
-                    <div id="timeSlots" class="time-slots">
-                        <!-- Time slots will be dynamically generated here -->
+                    <div id="doctor-warning" class="warning" style="display: none; color: red;">
+                        Please select both time and speciality first.
                     </div>
                 </div>
 
@@ -78,6 +88,9 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const timeSlotsContainer = document.getElementById('timeSlots');
+        const specialitySelect = document.getElementById('speciality');
+        const doctorSelect = document.getElementById('doctor');
+        const doctorWarning = document.getElementById('doctor-warning');
 
         // Generate time slots
         for (let hour = 9; hour < 17; hour++) {
@@ -145,16 +158,26 @@
                 document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                 this.classList.add('selected');
                 this.querySelector('input[type="radio"]').checked = true;
+                updateDoctorSelectState();
             });
         });
 
-        document.querySelectorAll('input[name="doctor-choice"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.getElementById('requestSpeciality').style.display =
-                    this.value === 'choose' ? 'block' : 'none';
-            });
+        specialitySelect.addEventListener('change', function() {
+            updateDoctorSelectState();
         });
 
+        function updateDoctorSelectState() {
+            const timeSelected = document.querySelector('input[name="appointmentTime"]:checked');
+            const specialitySelected = specialitySelect.value !== '';
+
+            if (timeSelected && specialitySelected) {
+                doctorSelect.disabled = false;
+                doctorWarning.style.display = 'none';
+            } else {
+                doctorSelect.disabled = true;
+                doctorWarning.style.display = 'block';
+            }
+        }
 
         // Add event listener for the "Find A Doctor" button
         document.getElementById('find-doctor-btn').addEventListener('click', function() {
@@ -163,7 +186,6 @@
             window.location.href = "{{route('checkAppointment')}}";
         });
     });
-    
     </script>
 </body>
 </html>
