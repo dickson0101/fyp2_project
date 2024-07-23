@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
-use App\Models\Product;
+use App\Models\Appointment;
 
 class AppointmentController extends Controller
 {
@@ -13,16 +13,16 @@ class AppointmentController extends Controller
 {
 
 
-    Product::create([
-        'name' => $request->medicationName,
-        'description' => $request->medicationDescription,
-        'expDate' => $request->expireDate,
-        'price' => $request->prices,
+    Appointment::create([
+        'speciality' => $request->specialitys,
+        'timeSlot' => $request->timeSlots,
+        'appointmentType' => $request->appointmentTypes,
+        'appointmentDate' => $request->appointmentDates,
         
-        'publisher' => $request->publishers,
+        'doctor' => $request->doctors,
     ]);
 
-    return view('addMedication');
+    return view('appointment');
 }
 
     public function view()

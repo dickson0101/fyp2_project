@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class appointment extends Model
 {
     protected $fillable = [
-        'name', 'description', 'expDate', 'price', 'image', 'publisher',
+        'speciality', 'timeSlot', 'appointmentType', 'appointmentDate',"doctor"
     ];
 
     // 其他模型代码...

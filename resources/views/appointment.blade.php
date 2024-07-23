@@ -16,6 +16,8 @@
         </div>
     </div>
 
+    <form action="{{ route('appointment') }}" method="get" enctype="multipart/form-data">
+    @csrf
     <div class="container">
         <div class="main-content">
             <div class="steps">
@@ -34,8 +36,8 @@
             </div>
 
             <div id="requestSpeciality" class="form-group">
-                <label for="speciality">Speciality</label>
-                <select id="speciality" name="doctor-speciality" required>
+                <label for="specialitys">Speciality</label>
+                <select id="specialitys" name="specialitys" required>
                     <option value="">Select a Speciality</option>
                     <option value="cardiology">Cardiology</option>
                     <option value="neurology">Neurology</option>
@@ -44,121 +46,86 @@
                 </select>
             </div>
 
+            <div class="form-group" id="doctor-choice-group">
+                <label>
+                    <input class="form-group" type="radio" name="doctor-choice" value="recent" required> Recent Doctor
+                </label>
+                <label>
+                    <input class="form-group" type="radio" name="doctor-choice" value="choose" required> Choose My Doctor
+                </label>
+                <input class="form-control" type="text" id="doctors" name="doctors" placeholder="doctor Name">
+            </div>
+
+            <div class="form-group">
+                <label for="appointmentDate">Select Appointment Date</label>
+                <input type="date" id="appointmentDate" name="appointmentDate" required>
+            </div>
+
             <div class="form-group">
                 <label>Appointment Time</label>
                 <div id="timeSlots" class="time-slots">
-                    <!-- Time slots will be dynamically generated here -->
+                    <?php
+                    for ($hour = 9; $hour < 17; $hour++) {
+                        for ($minute = 0; $minute < 60; $minute += 15) {
+                            $formattedHour = str_pad($hour, 2, '0', STR_PAD_LEFT);
+                            $formattedMinute = str_pad($minute, 2, '0', STR_PAD_LEFT);
+                            $timeValue = "$formattedHour:$formattedMinute";
+                            echo "
+                                <label class='time-slot available' id='time-slot-".str_replace(':', '-', $timeValue)."'>
+                                    <input type='radio' name='appointmentTime' value='$timeValue'>
+                                    <span>$timeValue</span>
+                                </label>
+                            ";
+                        }
+                    }
+                    ?>
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="form-group" id="doctor-choice-group">
-                    <label>
-                        <input class="form-control" type="radio" name="doctor-choice" value="recent" required> Recent Doctor
-                    </label>
-                    <label>
-                        <input class="form-control" type="radio" name="doctor-choice" value="choose" required> Choose My Doctor
-                    </label>
-                </div>
-                <div class="form-group" id="doctor-select-group">
-                    <label for="doctor">Select Doctor</label>
-                    <select id="doctor" name="doctor" disabled>
-                        <option value="">Empty</option>
-                    </select>
-                    <div id="doctor-warning" class="warning" style="display: none; color: red;">
-                        Please select both time and speciality first.
-                    </div>
-                </div>
-
-                <div class="form-group" id="appointment-type-group">
-                    <label>Appointment Type</label>
-                    <label>
-                        <input type="radio" name="appointment-type" value="online" checked> Online Appointment
-                    </label>
-                    <label>
-                        <input type="radio" name="appointment-type" value="clinic"> Clinic Appointment
-                    </label>
-                </div>
-
-                <button id="find-doctor-btn" class="next-button">Find A Doctor</button>
+            <div class="form-group" id="appointmentTypes">
+                <label>Appointment Type</label>
+                <label>
+                    <input type="radio" name="appointment-type" value="online" checked> Online Appointment
+                </label>
+                <label>
+                    <input type="radio" name="appointment-type" value="clinic"> Clinic Appointment
+                </label>
             </div>
+
+            <button id="find-doctor-btn" class="next-button">Find A Doctor</button>
         </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const timeSlotsContainer = document.getElementById('timeSlots');
-        const specialitySelect = document.getElementById('speciality');
-        const doctorSelect = document.getElementById('doctor');
-        const doctorWarning = document.getElementById('doctor-warning');
+        const specialitySelect = document.getElementById('specialitys');
+        const doctorSelect = document.getElementById('doctors');
+        const appointmentDate = document.getElementById('appointmentDate');
 
-        // Generate time slots
-        for (let hour = 9; hour < 17; hour++) {
-            const hourContainer = document.createElement('div');
-            hourContainer.className = 'hour-container';
-            hourContainer.id = `hour-container-${hour}`;
+        // Set the minimum date to today
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayDate = `${yyyy}-${mm}-${dd}`;
 
-            const hourLabel = document.createElement('div');
-            hourLabel.className = 'hour-label';
-            hourLabel.id = `hour-label-${hour}`;
-            
-            const hourTime = document.createElement('div');
-            hourTime.className = 'hour-time';
-            
-            const timeSpan = document.createElement('span');
-            timeSpan.textContent = `${hour.toString().padStart(2, '0')}:00`;
-            
-            const hourAvailability = document.createElement('span');
-            hourAvailability.className = 'hour-availability';
-            hourAvailability.id = `hour-availability-${hour}`;
-            hourAvailability.textContent = '(Available: 10)';
-            
-            hourTime.appendChild(timeSpan);
-            hourTime.appendChild(hourAvailability);
-            hourLabel.appendChild(hourTime);
-            hourContainer.appendChild(hourLabel);
+        appointmentDate.setAttribute('min', todayDate);
 
-            const minuteSlots = document.createElement('div');
-            minuteSlots.className = 'minute-slots';
-            minuteSlots.id = `minute-slots-${hour}`;
-
-            for (let minute = 0; minute < 60; minute += 5) {
-                const timeSlot = document.createElement('label');
-                timeSlot.className = 'time-slot';
-                
-                const formattedHour = hour.toString().padStart(2, '0');
-                const formattedMinute = minute.toString().padStart(2, '0');
-                const timeValue = `${formattedHour}:${formattedMinute}`;
-                
-                timeSlot.id = `time-slot-${timeValue.replace(':', '-')}`;
-
-                timeSlot.innerHTML = `
-                    <input type="radio" name="appointmentTime" value="${timeValue}">
-                    <span>${formattedMinute}</span>
-                `;
-
-                minuteSlots.appendChild(timeSlot);
-            }
-
-            hourContainer.appendChild(minuteSlots);
-            timeSlotsContainer.appendChild(hourContainer);
-        }
-
-        // Add event listeners
-        document.querySelectorAll('.hour-label').forEach(label => {
-            label.addEventListener('click', function() {
-                this.classList.toggle('open');
-                this.nextElementSibling.classList.toggle('open');
-            });
-        });
-
+        // Event listeners for time slots and speciality selection
         document.querySelectorAll('.time-slot').forEach(slot => {
             slot.addEventListener('click', function(e) {
                 e.stopPropagation();
-                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                this.classList.add('selected');
-                this.querySelector('input[type="radio"]').checked = true;
-                updateDoctorSelectState();
+                if (!this.classList.contains('full')) {
+                    document.querySelectorAll('.time-slot').forEach(s => {
+                        s.classList.remove('selected');
+                        if (!s.classList.contains('full')) {
+                            s.classList.add('available');
+                        }
+                    });
+                    this.classList.remove('available');
+                    this.classList.add('selected');
+                    this.querySelector('input[type="radio"]').checked = true;
+                }
             });
         });
 
@@ -166,25 +133,38 @@
             updateDoctorSelectState();
         });
 
-        function updateDoctorSelectState() {
-            const timeSelected = document.querySelector('input[name="appointmentTime"]:checked');
-            const specialitySelected = specialitySelect.value !== '';
+        appointmentDate.addEventListener('change', function() {
+            updateTimeslots();
+            updateDoctorSelectState();
+        });
 
-            if (timeSelected && specialitySelected) {
-                doctorSelect.disabled = false;
-                doctorWarning.style.display = 'none';
-            } else {
-                doctorSelect.disabled = true;
-                doctorWarning.style.display = 'block';
+        function updateTimeslots() {
+            const selectedDate = appointmentDate.value;
+            simulateFullTimeSlots(selectedDate);
+        }
+
+        function simulateFullTimeSlots(selectedDate) {
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('full', 'selected');
+                slot.classList.add('available');
+            });
+
+            const fullDates = ["2024-07-22", "2024-07-23", "2024-07-24", "2024-07-25", "2024-07-26"];
+            if (fullDates.includes(selectedDate)) {
+                document.querySelectorAll('.time-slot').forEach((slot, index) => {
+                    if (index % 2 === 0) {
+                        slot.classList.remove('available');
+                        slot.classList.add('full');
+                    }
+                });
             }
         }
 
-        // Add event listener for the "Find A Doctor" button
         document.getElementById('find-doctor-btn').addEventListener('click', function() {
-            // Here you can add logic to handle the form submission
-            // For now, we'll just simulate a route change
-            window.location.href = "{{route('checkAppointment')}}";
+            window.location.href = "{{route('successAppointment')}}";
         });
+
+        updateTimeslots();
     });
     </script>
 </body>
