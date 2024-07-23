@@ -67,12 +67,14 @@ Route::get('/payment',[App\Http\Controllers\StripeController::class,'index'])->n
 
 Route::post('/checkout',[App\Http\Controllers\StripeController::class,'checkout'])->name('checkout');
 
-Route::get('/success',[App\Http\Controllers\StripeController::class,'success'])->name('success');
+// Route::get('/success',[App\Http\Controllers\StripeController::class,'success'])->name('success');
 
-Route::post('/deleteFavorites', [App\Http\Controllers\CartController::class, 'deleteFavorites'])->name('deleteFavorites');
+// Route::post('/deleteFavorites', [App\Http\Controllers\CartController::class, 'deleteFavorites'])->name('deleteFavorites');
 
-Route::post('/searchProduct', [App\Http\Controllers\ProductController::class, 'search'])->name('searchProduct');
+// Route::post('/searchProduct', [App\Http\Controllers\ProductController::class, 'search'])->name('searchProduct');
  
-Auth::routes();
+// Auth::routes();
  
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
