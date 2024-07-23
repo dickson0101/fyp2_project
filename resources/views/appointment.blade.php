@@ -25,12 +25,9 @@
                     <div class="step-number">1</div>
                     <div>Appointment Details</div>
                 </div>
+                
                 <div class="step">
                     <div class="step-number">2</div>
-                    <div>Patient's Info</div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
                     <div>Completed Submission</div>
                 </div>
             </div>
@@ -53,7 +50,7 @@
                 <label>
                     <input class="form-group" type="radio" name="doctor-choice" value="choose" required> Choose My Doctor
                 </label>
-                <input class="form-control" type="text" id="doctors" name="doctors" placeholder="doctor Name">
+                <input class="form-control" type="text" id="doctors" name="doctors" placeholder="Doctor Name" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -99,7 +96,9 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const specialitySelect = document.getElementById('specialitys');
-        const doctorSelect = document.getElementById('doctors');
+        const doctorInput = document.getElementById('doctors');
+        const doctorChoiceRecent = document.querySelector('input[name="doctor-choice"][value="recent"]');
+        const doctorChoiceChoose = document.querySelector('input[name="doctor-choice"][value="choose"]');
         const appointmentDate = document.getElementById('appointmentDate');
 
         // Set the minimum date to today
@@ -159,6 +158,19 @@
                 });
             }
         }
+
+        doctorChoiceRecent.addEventListener('change', function() {
+            if (this.checked) {
+                doctorInput.style.display = 'none';
+                doctorInput.value = '';
+            }
+        });
+
+        doctorChoiceChoose.addEventListener('change', function() {
+            if (this.checked) {
+                doctorInput.style.display = 'block';
+            }
+        });
 
         document.getElementById('find-doctor-btn').addEventListener('click', function() {
             window.location.href = "{{route('successAppointment')}}";

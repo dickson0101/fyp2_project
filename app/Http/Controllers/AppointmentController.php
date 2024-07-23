@@ -27,7 +27,7 @@ class AppointmentController extends Controller
 
     public function view()
     {
-        return view('appointment');
+        return view('doctorPage');
     }
     public function view2()
     {
