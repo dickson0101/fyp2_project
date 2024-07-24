@@ -49,6 +49,8 @@ Route::get('/addInventory', [App\Http\Controllers\MedicationController::class, '
 
 Route::get('/doctorPage', [App\Http\Controllers\AppointmentController::class, 'view'])->name('doctorPage');
 
+Route::get('/doctorAdd', [App\Http\Controllers\DoctorController::class, 'add'])->name('doctorAdd');
+
 Route::get('/appointment', [App\Http\Controllers\AppointmentController::class, 'add'])->name('appointment');
 
 Route::get('/checkAppointment', [App\Http\Controllers\AppointmentController::class, 'view2'])->name('checkAppointment');
