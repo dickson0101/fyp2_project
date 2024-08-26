@@ -53,7 +53,7 @@
         <h1>Success</h1> 
         <p>We received your purchase request;<br/> we'll be in touch shortly!</p>
 
-        <button class="button"><a href="{{route('nursePage2')}}">back to dashboard</button>
+        <button class="button"><a href="{{route('nursePage')}}">back to dashboard</button>
       </div>
       
        

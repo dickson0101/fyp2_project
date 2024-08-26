@@ -18,27 +18,30 @@ class StripeController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
+            // 从请求中获取总金额
+            $totalAmount = $request->input('total_amount');
+
+            // 确保 total_amount 是以分为单位的
+            $totalAmountInCents = $totalAmount * 100;
+
             $session = Session::create([
-                "payment_method_types" => ['card'],
-                "line_items" => [[
-                    "price_data" => [
-                        "currency" => "MYR",
-                        "product_data" => [
-                            "name" => "This payment is testing purpose of southern online",
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'MYR',
+                        'product_data' => [
+                            'name' => 'Total Medication Cost',
                         ],
-                        "unit_amount" => $request->sub * 100,
+                        'unit_amount' => $totalAmountInCents, // Stripe 需要以分为单位的金额
                     ],
-                    "quantity" => 1,
+                    'quantity' => 1,
                 ]],
-                "mode" => "payment",
-                "success_url" => route('success'),
-                "cancel_url" => route('payment'),
-                "customer_email" => $request->email,
-                "billing_address_collection" => 'required',
+                'mode' => 'payment',
+                'success_url' => route('success'),
+                'cancel_url' => route('medications.list'),
             ]);
 
             return redirect()->away($session->url);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -46,6 +49,6 @@ class StripeController extends Controller
 
     public function success()
     {
-        return view('payment');
+        return view('nursePage');
     }
 }

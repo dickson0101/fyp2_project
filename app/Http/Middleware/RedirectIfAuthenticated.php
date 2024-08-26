@@ -19,14 +19,23 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, ...$guards)
     {
+        \Log::info('RedirectIfAuthenticated middleware triggered', ['guards' => $guards]);
+    
         $guards = empty($guards) ? [null] : $guards;
-
+    
         foreach ($guards as $guard) {
+            \Log::info('Checking guard', ['guard' => $guard, 'authenticated' => Auth::guard($guard)->check()]);
+            if ($guard == "nurse" && Auth::guard($guard)->check()) {
+                return redirect(RouteServiceProvider::nursePage);
+            }
+            if ($guard == "doctor" && Auth::guard($guard)->check()) {
+                return redirect(RouteServiceProvider::homeDoctor);
+            }
             if (Auth::guard($guard)->check()) {
                 return redirect(RouteServiceProvider::HOME);
             }
         }
-
+    
         return $next($request);
     }
-}
+}    

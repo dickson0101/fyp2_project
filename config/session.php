@@ -155,7 +155,9 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    // config/session.php
+'domain' => env('SESSION_DOMAIN', null),
+
 
     /*
     |--------------------------------------------------------------------------

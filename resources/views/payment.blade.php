@@ -65,7 +65,7 @@
    </style>
 </head>
 <body>
-   <a href="/nursePage" class="back-button">Back</a>
+   <a href="/nursePage2" class="back-button">Back</a>
    <div>
        <h1><strong>Choose your Payment Method</strong></h1>
        <form action="/checkout" method="POST" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}" id="payment-form">

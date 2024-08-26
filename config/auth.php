@@ -40,6 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'nurse' => [
+            'driver' => 'session',
+            'provider' => 'nurses',
+        ],
+
+        'doctor' => [
+            'driver' => 'session',
+            'provider' => 'doctor_logins',
+        ],
     ],
 
     /*
@@ -63,6 +73,16 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'nurses' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Nurse::class,
+        ],
+
+        'doctor_logins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Doctor_login::class,
         ],
 
         // 'users' => [

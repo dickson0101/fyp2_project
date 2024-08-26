@@ -1,97 +1,28 @@
-@extends('layout')
-@section('content')
-
-<link rel="stylesheet" href="{{ asset('css/appointment.css') }}">
-<style>
-*{
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-
-
-h1{
-    text-transform: uppercase;
-    text-align: center;
-    font-family: helvetica, arial, sans-serif;
-    color: #666;
-    font-weight: lighter;
-}
-
-.field{
-    position: relative;
-}
-
-form{
-    width: 500px;
-    margin: 0 auto;
-}
-
-input, button, textarea{
-    position: relative;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 10px;
-    font-size: 14px;
-    margin-bottom: 10px;
-    width: 100%;
-    border: 1px solid #C7C7C7;
-    background-color: #fafafa;
-    -webkit-transition: background-color .3s, border-color .4s;
-    -moz-transition: background-color .3s, border-color .4s;
-    -o-transition: background-color .3s, border-color .4s;
-    transition: background-color .3s, border-color .4s;
-}
-
-textarea{
-    height: 100px;
-    resize: none;
-}
-
-input:focus, textarea:focus, input:hover, textarea:hover{
-    outline: none;
-    border-color: #777;
-}
-
-button.medication-button{
-    display: block;
-    border: none;
-    background-color: #666;
-    color: #fff;
-    position: relative;
-    height: 50px;
-    line-height: 50px;
-    padding: 0;
-    -webkit-transition: all 0.3s;
-    -moz-transition: all 0.3s;
-    transition: all 0.3s;
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    cursor: pointer;
-}
-</style>
-
-<div class="main-content">
-    <div class="header">
-        <div class="search-container">
-            <input type="text" placeholder="Search Doctor name or Email" class="search-input">
-            <button class="search-button">Search</button>
-        </div>
-        <div class="date-container">
-            <p class="date-label">Today's Date</p>
-            <p class="date-value">2022-06-03</p>
-        </div>
-    </div>
-    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <title>Doctor Appointment</title>
+    <style>
+         
+    </style>
+</head>
+<body>
 <div class="container">
-    <div class="row">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6">
-            <br>
+    <!-- Sidebar and other content -->
+    <div class="main-content">
+        <div class="header">
+            <a href="{{ route('showProduct') }}"> 
+                <button class="btn btn-light">← Back</button>
+            </a>
+            <div class="date-container">
+                <p class="date-label">Today's Date</p>
+                <p class="date-value" id="currentDate"></p>
+            </div>
+        </div>
+
             <h1>Add New Medication</h1><br>
             
             <form action="{{ route('addMedication') }}" method="post" enctype="multipart/form-data">
@@ -114,7 +45,12 @@ button.medication-button{
 
                 <div class="form-group">
                     <label for="prices">Price</label>
-                    <input class="form-control" type="text" id="prices" name="prices" required>
+                    <input class="form-control" type="number" id="prices" name="prices" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input class="form-control" type="number" id="quantity" name="quantity" step="1" required>
                 </div>
 
                 <div class="form-group">
@@ -129,6 +65,8 @@ button.medication-button{
 
                 <button class="medication-button" type="submit" class="btn btn-primary">Add New</button>
             </form>
+
+            
         </div>
     </div>
 </div>
@@ -139,4 +77,5 @@ button.medication-button{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-@endsection
+</body>
+</html>

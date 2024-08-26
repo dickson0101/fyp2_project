@@ -1,15 +1,18 @@
+:root {
+  --blue: #3b82f6;
+  --white: #ffffff;
+  --black2: #999;
+}
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f3f4f6;
 }
-
 .container {
   display: flex;
-  height: 110vh;
+  min-height: 100vh;
 }
-
 .sidebar {
   width: 250px;
   background-color: white;
@@ -17,14 +20,12 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 .sidebar-header {
   padding: 20px;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .profile-pic {
   width: 40px;
   height: 40px;
@@ -32,41 +33,35 @@ body {
   border-radius: 50%;
   margin-right: 10px;
 }
-
 .username {
   margin: 0;
   font-size: 16px;
 }
-
 .email {
   margin: 0;
   font-size: 14px;
   color: #6b7280;
 }
-
 .logout-btn {
-  background-color: #3b82f6;
+  background-color: var(--blue);
   color: white;
   padding: 10px 20px;
+  width: 100px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 10px;
 }
-
 .logout-btn:hover {
   background-color: #2563eb;
 }
-
 .sidebar-nav {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   padding-top: 20px;
-  border-top: 1px solid #e5e7eb; /* Adding top border to create separation */
+  border-top: 1px solid #e5e7eb;
 }
-
 .nav-link {
   display: block;
   padding: 10px 20px;
@@ -74,61 +69,104 @@ body {
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
-
 .nav-link.active {
-  background-color: #3b82f6;
+  background-color: var(--blue);
   color: white;
 }
-
 .nav-link:hover {
   background-color: #e5e7eb;
 }
-
-.cardBox {
-  position: relative;
-  width: 100%;
+.main-content {
+  flex-grow: 1;
   padding: 20px;
+  background-color: var(--white);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.btn {
+  background-color: var(--blue);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.btn-light {
+  background-color: #f8f9fa;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.time-slot {
+  padding: 10px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.time-slot:hover {
+  background-color: #e5e7eb;
+}
+.time-slot.selected {
+  background-color: var(--blue);
+  color: white;
+}
+.btn.doctor-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  margin-top: 20px;
+}
+.cardBox {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 50px;
-
+  grid-gap: 20px;
+  margin-bottom: 20px;
 }
-
-.cardBox .card {
-position: relative;
-background: var(--white);
-padding: 20px;
-border-radius: 20px;
-display: flex;
-
-cursor: pointer;
-text-decoration: none;
-box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+.card {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
 }
-
-.cardBox .card .cardName {
-position: relative;
-font-weight: 500;
-font-size: 2.0rem;
-color: var(--blue);
+.card:hover {
+  background: var(--blue);
+  color: var(--white);
 }
-
-.cardBox .card .numbers {
-color: var(--black2);
-font-size: 1.1rem;
-margin-top: 5px;
+.card .cardName {
+  font-weight: 500;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
 }
-
-.cardBox .card .iconBx {
-font-size: 3.5rem;
-color: var(--black2);
+.card .numbers {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
 }
-
-.cardBox .card:hover {
-background: var(--blue);
+.card .iconBx {
+  font-size: 2.5rem;
+  color: var(--black2);
 }
-.cardBox .card:hover .numbers,
-.cardBox .card:hover .cardName,
-.cardBox .card:hover .iconBx {
-color: var(--white);
+.card:hover .iconBx {
+  color: var(--white);
 }

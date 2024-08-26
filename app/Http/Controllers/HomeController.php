@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Appointment;
+use App\Models\Doctor;
 
 class HomeController extends Controller
 {
@@ -24,5 +26,21 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    public function viewPatient()
+    {
+        return view('homePatient');
+    }
+
+    public function viewDoctor()
+    {
+        $doctors = Doctor::all();
+        return view('homeDoctor', ['doctors' => $doctors]);
+    }
+
+    public function viewNurse()
+    {
+        return view('nursePage');
     }
 }
