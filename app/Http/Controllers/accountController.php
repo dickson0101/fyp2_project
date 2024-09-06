@@ -52,14 +52,14 @@ class accountController extends Controller
 
     public function destroy(Request $request)
     {
-        // Perform account deletion logic
+        
         $user = Auth::user();
         $user->delete();
 
-        // Logout the user
+        
         Auth::logout();
 
-        // Redirect to the home page or another route
+        
         return redirect()->route('login');
     }
 }

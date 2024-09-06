@@ -22,9 +22,9 @@ class PDFController extends Controller
     $patient_id = $request->session()->get('selected_patient_id');
     $patient = User::find($patient_id);
 
-    // 从 session 或其他地方获取 content 和 drawingData
-    $content = $request->session()->get('pdf_content', ''); // 默认值为空
-    $drawingData = $request->session()->get('drawing_data', ''); // 默认值为空
+    
+    $content = $request->session()->get('pdf_content', ''); 
+    $drawingData = $request->session()->get('drawing_data', ''); 
 
     return view('pdf.index', compact('patient', 'content', 'drawingData'));
 }
@@ -239,7 +239,7 @@ public function generatePDFAndZip(Request $request)
 {
     $reportFiles = ReportFile::with('patient')->get();
     
-    $patient_id = auth()->user()->id; // 当前登录病人的 ID
+    $patient_id = auth()->user()->id; 
     $reports = ReportFile::where('patient_id', $patient_id)->get();
 
     foreach ($reportFiles as $report) {

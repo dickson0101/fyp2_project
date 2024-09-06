@@ -15,10 +15,9 @@ class StripeController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
-            // 从请求中获取总金额
+            
             $totalAmount = $request->input('total_amount');
 
-            // 确保 total_amount 是以分为单位的
             $totalAmountInCents = $totalAmount * 100;
 
             $session = Session::create([
@@ -29,13 +28,14 @@ class StripeController extends Controller
                         'product_data' => [
                             'name' => 'Total Medication Cost',
                         ],
-                        'unit_amount' => $totalAmountInCents, // Stripe 需要以分为单位的金额
+                        'unit_amount' => $totalAmountInCents, 
                     ],
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
                 'success_url' => route('nursePage'),
                 'cancel_url' => route('nurseList'),
+                'locale' => 'en',
             ]);
 
             return redirect()->away($session->url);

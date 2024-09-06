@@ -212,9 +212,6 @@ Route::get('/video',[App\Http\Controllers\videoController::class,'index'])->name
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// routes/web.php
 
-Route::get('/test', function () {
-    return 'Test route accessed!';
-});
+
 

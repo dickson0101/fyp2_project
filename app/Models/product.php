@@ -10,5 +10,5 @@ class Product extends Model
         'name', 'description', 'expDate', 'price','batch', 'image', 'publisher','stock','appDate'
     ];
 
-    // 其他模型代码...
+    
 }

@@ -72,7 +72,7 @@ class DoctorController extends Controller
     }
     public function update(Request $request, $id)
     {
-        // Validate request data
+       
         $validator = Validator::make($request->all(), [
             'DoctorName' => 'required|string|max:255',
             'DoctorEmail' => 'required|email|unique:users,email,' . User::where('doctor_id', $id)->first()->id,
@@ -89,10 +89,9 @@ class DoctorController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Find the doctor record
         $doctor = Doctor::findOrFail($id);
 
-        // Handle image upload and update
+        
         if ($request->hasFile('DoctorImage')) {
             $image = $request->file('DoctorImage');
             $imageName = time() . '-' . $image->getClientOriginalName();
@@ -100,26 +99,25 @@ class DoctorController extends Controller
             $doctor->image = $imageName;
         }
 
-        // Update doctor details
+        
         $doctor->name = $request->input('DoctorName');
         $doctor->certificate = $request->input('Certificate');
         $doctor->specialist = $request->input('Specialist');
         $doctor->telephone = $request->input('Telephone');
         $doctor->language = implode(', ', $request->input('Language'));
 
-        // Handle dates and times
+        
         $datesAndTimesJson = $request->input('datesAndTimes') ? json_decode($request->input('datesAndTimes'), true) : null;
         $doctor->dates_and_times = json_encode($datesAndTimesJson);
 
         $doctor->save();
 
-        // Update the associated user record if it exists
+       
         $user = User::where('doctor_id', $doctor->id)->first();
         if ($user) {
             $user->name = $request->input('DoctorName');
             $user->email = $request->input('DoctorEmail');
 
-            // Update password if provided
             if ($request->filled('DoctorPassword')) {
                 $user->password = Hash::make($request->input('DoctorPassword'));
             }
@@ -156,19 +154,19 @@ class DoctorController extends Controller
             return redirect()->route('doctorPage')->with('error', 'Doctor not found');
         }
 
-        // Delete associated user account
+        
         $user = User::where('doctor_id', $doctor->id)->first();
         if ($user) {
             $user->delete();
         }
 
-        // Delete doctor's image file if it exists
+        
         $imagePath = public_path('images') . '/' . $doctor->image;
         if (file_exists($imagePath)) {
             unlink($imagePath);
         }
 
-        // Delete the doctor record
+        
         $doctor->delete();
 
         return redirect()->route('doctorPage')->with('success', 'Doctor and associated user deleted successfully');

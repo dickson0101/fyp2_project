@@ -13,30 +13,30 @@ class MedicationController extends Controller
 {
     public function index()
 {
-    // Get the selected patient ID from the session
+    
     $selectedPatientId = session('selected_patient_id');
 
-    // If no patient ID is selected, you might want to handle it, e.g., redirect or show a message
+    
     if (!$selectedPatientId) {
         return redirect()->route('doctorList')->with('error', 'No patient selected.');
     }
 
-    // Filter medications for the selected patient
+    
     $medications = Medication::where('patient_id', $selectedPatientId)->get();
 
-    // Get medication IDs to fetch product prices
+    
     $medicationIds = $medications->pluck('id');
 
-    // Get corresponding product prices
+   
     $products = Product::whereIn('id', $medicationIds)->get()->keyBy('id');
 
-    // Calculate total amount
+    
     $totalAmount = $medications->sum(function($medication) use ($products) {
         $product = $products->get($medication->id);
         return $product ? $product->price : 0;
     });
 
-    // Return the view with medications, total amount, and selected patient ID
+    
     return view('list', [
         'medications' => $medications,
         'totalAmount' => $totalAmount,
@@ -48,20 +48,20 @@ class MedicationController extends Controller
     public function index2(){
         $medications = Medication::all();
     
-        // 获取药品 ID 列表
+        
         $medicationIds = $medications->pluck('id');
     
-        // 从 Product 模型中获取对应的药品价格
+       
         $products = Product::whereIn('id', $medicationIds)->get()->keyBy('id'); // Ensure the keyBy is 'id' if 'medication_id' is incorrect
     
-        // 计算总价格
+        
         $totalAmount = $medications->sum(function($medication) use ($products) {
-            // 获取当前药品的价格
+            
             $product = $products->get($medication->id);
-            return $product ? $product->price : 0; // 假设 Product 模型有 price 字段
+            return $product ? $product->price : 0; 
         });
     
-        // 返回视图，传递药品列表和总价格
+        
         return view('nurseList', ['medications' => $medications, 'totalAmount' => $totalAmount]);
     }
 
@@ -73,12 +73,12 @@ class MedicationController extends Controller
 }
     
 
-  // 在 MedicationController 中的 store 方法
+ 
   public function store(Request $request)
   {
-      // Validate data
+      
       $validatedData = $request->validate([
-          'name' => 'nullable|max:255', // Optional patient name
+          'name' => 'nullable|max:255', 
           'medication' => 'required|array',
           'medication.*' => 'required|max:255',
           'tablets' => 'required|array',
@@ -101,10 +101,10 @@ class MedicationController extends Controller
 
           $dosage = "{$validatedData['tablets'][$key]} Tablet(s), {$validatedData['frequency'][$key]} Time(s) Daily, {$validatedData['meal_relation'][$key]} Eating";
 
-          // Create medication record
+         
           Medication::create([
               'name' => $selectedPatientName,
-              'patient_id' => $patientId, // Store patient_id
+              'patient_id' => $patientId, 
               'medication' => $medicationName,
               'price' => $price,
               'dosage' => $dosage,
@@ -156,8 +156,8 @@ class MedicationController extends Controller
    public function edit($id)
     {
         $medication = Medication::findOrFail($id);
-        $products = Product::all(); // Fetch all products for medication selection
-        $patients = User::where('role', 'patient')->get(); // Fetch all patients
+        $products = Product::all(); 
+        $patients = User::where('role', 'patient')->get(); 
     
         return view('editMedication', compact('medication', 'products', 'patients'));
     }
@@ -193,23 +193,22 @@ class MedicationController extends Controller
     
     public function list(Request $request)
 {
-    // 获取medications表中所有存在的用户名称
+    
     $existingUserNames = Medication::distinct()->pluck('name');
     
-    // 从User模型中筛选出这些用户
+    
     $users = User::whereIn('name', $existingUserNames)->get();
 
-    // 获取选择的用户ID
+    
     $patientId = $request->query('patient_id');
     
-    // 构建查询
     $medicationsQuery = Medication::query();
     
     if ($patientId) {
         $medicationsQuery->where('patient_id', $patientId);
     }
     
-    // 获取过滤后的medications
+   
     $medications = $medicationsQuery->get();
     
     return view('nurseList', compact('users', 'medications', 'patientId'));

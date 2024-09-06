@@ -10,7 +10,7 @@ class InventoryController extends Controller
 {
     public function add(Request $request)
     {
-        // Validate the incoming request data if needed
+        
         
         if ($request->file('medicationImage') != '') {
             $image = $request->file('medicationImage');
@@ -20,12 +20,12 @@ class InventoryController extends Controller
             $imageName = 'empty.jpg';
         }
 
-        // Create product and save to database
+        
         Product::create([
             'name' => $request->medicationName,
             'description' => $request->medicationDescription,
             'expDate' => $request->expireDate,
-            'stock' => $request->quantity, // Updated from stock to quantity
+            'stock' => $request->quantity, 
             'price' => $request->prices,
             'batch' => $request->batchNo,
             'appDate' => $request->dateAppro,
@@ -44,7 +44,7 @@ class InventoryController extends Controller
 
     public function edit($id)
     {
-        $products = Product::where('id', $id)->get(); // Updated to use where
+        $products = Product::where('id', $id)->get(); 
         return view('editProduct')->with('products', $products);
     }
 
@@ -65,9 +65,9 @@ class InventoryController extends Controller
         $product->batch = $request->batchNo;
         $product->appDate = $request->dateAppro;
         $product->publisher = $request->publishers;
-        $product->stock = $request->quantity; // Updated from stock to quantity
+        $product->stock = $request->quantity; 
 
-        $product->save(); // SQL update products set name='$productName',.....where id='$id'
+        $product->save(); 
         return redirect()->route('showProduct');
     }
 
@@ -76,17 +76,17 @@ class InventoryController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            // Handle case where the product with the given ID is not found
+            
             return redirect()->route('addMedication')->with('error', 'Product not found');
         }
 
-        // Delete the product image file
+        
         $imagePath = public_path('images') . '/' . $product->image;
         if (file_exists($imagePath)) {
             unlink($imagePath);
         }
 
-        // Delete the product from the database
+        
         $product->delete();
 
         return redirect()->route('showProduct')->with('success', 'Product deleted successfully');
@@ -94,16 +94,16 @@ class InventoryController extends Controller
 
     public function search(Request $request)
 {
-    // 获取搜索关键字
+    
     $searchTerm = $request->input('searchTerm');
 
-    // 查询药物，支持模糊匹配
+    
     $products = Product::where('name', 'like', "%{$searchTerm}%")
                         ->orWhere('description', 'like', "%{$searchTerm}%")
                         ->orWhere('batchNo', 'like', "%{$searchTerm}%")
                         ->get();
 
-    // 返回结果到视图
+    
     return view('showProduct')->with('products', $products);
 }
 
