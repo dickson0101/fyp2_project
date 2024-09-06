@@ -114,27 +114,7 @@
 
 <div class="container">
     <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="profile-pic"></div>
-            <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
-            </div>
-        </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="logout-btn">Log out</button>
-        </form>
-        <nav class="sidebar-nav">
-        <a href="{{ route('nursePage') }}" class="nav-link">Home</a>
-            <a href="{{ route('doctorPage') }}" class="nav-link ">Doctors</a>
-            <a href="#" class="nav-link">Schedule</a>
-            <a href="{{ route('showProduct') }}" class="nav-link ">Mediation</a>
-            <a href="{{ route('medications.list') }}" class="nav-link active ">payment</a>
-            <a href="{{ route('account') }}" class="nav-link">Account</a>
-        </nav>
-    </div>
+   
 
     <div class="main-content">
         <div class="header">
@@ -142,10 +122,7 @@
                 <button class="btn btn-light">← Back</button>
             </a>
 
-            <div class="search-bar">
-                <input type="text" placeholder="Search Doctor name or Email" class="search-input">
-                <a href="{{ route('searchDoctor') }}" class="btn btn-light">Search</a>
-            </div>
+            
             <div class="date-container">
                 <p class="date-label">Today's Date</p>
                 <p class="date-value">{{ now()->format('Y-m-d') }}</p>
@@ -159,7 +136,9 @@
     <a href="{{ route('addMedication') }}" class="btn">+ Add New</a>
 </div>
 
-<h2>All Medication ({{ $products->count() }})</h2>
+<h2>All Medication ({{ $products->count() }})</h2><br>
+
+
 
         <div class="table-container">
             <table>
@@ -167,9 +146,11 @@
                     <tr>
                         <th>Image</th>
                         <th>Medication Name</th>
+                        <th>Batch Number</th>
                         <th>price</th>
                         <th>description</th>
                         <th>expDate</th>
+                        <th>date of approval</th>
                         <th>quantity</th>
                         <th>publisher</th>
                         <th>Events</th>
@@ -186,9 +167,12 @@
                                 
                             </td>
                             <td>{{$product->name}}</td>
+                            <td>{{$product->batch}}</td>
                             <td>RM {{$product->price}}</td>
+                            
                             <td>{{$product->description}}</td>
                             <td>{{$product->expDate}}</td>
+                            <td>{{$product->appDate}}</td>
                             <td>{{$product->stock}}</td>
                             <td>{{$product->publisher}}</td>
                             <td>

@@ -2,128 +2,155 @@
 @section('content')
 
 <style>
-        body, h1, h2, h3, p {
-            margin: 0;
-            padding: 0;
-        }
+    body, h1, h2, h3, p {
+        margin: 0;
+        padding: 0;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-        }
+    body {
+        font-family: Arial, sans-serif;
+    }
 
-        .container {
-            display: flex;
-        }
+    .container {
+        display: flex;
+    }
 
-        .main {
-            flex-grow: 1;
-            padding: 20px;
-        }
+    .sidebar {
+        width: 250px;
+        background-color: #f8f9fa;
+        height: 100vh;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
 
-        .topbar {
-            /* Your topbar styles */
-        }
+    .main {
+        margin-left: 250px; /* Adjust based on sidebar width */
+        padding: 20px;
+        flex-grow: 1;
+    }
 
-        .faq {
-            max-width: 800px;
-            margin: 0 auto;
-            margin-bottom: 20px; 
-        }
+    .topbar {
+        /* Your topbar styles */
+    }
 
-        .accordion {
-            border: 1px solid #ccc;
-            margin-top: 20px;
-        }
+    .date-container {
+        text-align: right;
+        margin-bottom: 20px;
+    }
 
-        .card {
-            border-bottom: 1px solid #ccc;
-        }
+    .faq {
+        max-width: 800px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
 
-        .card-header {
-            background-color: #f5f5f5;
-            padding: 10px;
-            /* 添加 cursor: pointer; */
-            cursor: pointer;
-        }
+    .accordion {
+        border: 1px solid #ccc;
+    }
 
-        .card-content {
-            padding: 10px;
-            display: none;
-        }
+    .card {
+        border-bottom: 1px solid #ccc;
+        cursor: pointer;
+        outline: none; /* Remove default outline */
+    }
 
-        .card.active .card-content {
-            display: block;
-        }
-    </style>
-           <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    .card-header {
+        background-color: #f5f5f5;
+        padding: 10px;
+    }
+
+    .card-content {
+        padding: 10px;
+        display: none;
+    }
+
+    .card.active .card-content {
+        display: block;
+    }
+
+    .card:focus {
+        outline: none; /* Remove focus outline */
+    }
+
+    .logout-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    .logout-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 
 <div class="container">
-    
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="profile-pic"></div>
             <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
+                <h2 class="username">{{ Auth::user()->name }}</h2>
+                <p class="email">{{ Auth::user()->email }}</p>
             </div>
         </div>
-        <button class="logout-btn">Log out</button>
+        <form action="{{ route('logout2') }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="logout-btn">Log out</button>
+        </form>
         <nav class="sidebar-nav">
-        <a href="{{ route('homePatient') }}" class="nav-link ">Home</a>
+            <a href="{{ route('homePatient') }}" class="nav-link">Home</a>
             <a href="{{ route('aboutUs') }}" class="nav-link">About Us</a>
             <a href="{{ route('contactUs') }}" class="nav-link">Contact Us</a>
             <a href="{{ route('F&Q') }}" class="nav-link active">F&Q</a>
-            <a href="{{ route('feedback') }}" class="nav-link">Feeback</a>
+            <a href="{{ route('feedback') }}" class="nav-link">Feedback</a>
             <a href="{{ route('account') }}" class="nav-link">Account</a>
         </nav>
-</div>
+    </div>
+
+    <div class="main">
         <div class="date-container">
             <p class="date-label">Today's Date</p>
             <p class="date-value">{{ now()->format('Y-m-d') }}</p>
         </div>
-    
-    <br>
-    <br>
 
-  <div class="faq" style="margin-bottom: 10px;">
-
-                <h2>Frequently Asked Questions (F&Q)</h2>
-                <form action="{{route('F&Q')}}" method="post" enctype='multipart/form-data'>
-         @csrf
-         <br><br>
-
+        <div class="faq">
+            <h2>Frequently Asked Questions (F&Q)</h2>
+            <form action="{{ route('F&Q') }}" method="post" enctype='multipart/form-data'>
+                @csrf
                 <div class="accordion">
                     <div class="card" onclick="toggleCard(this)">
                         <div class="card-header">
-                            <h3>what can i do in this system?
-                            </h3>
+                            <h3>What can I do in this system?</h3>
                         </div>
                         <div class="card-content">
-                            <p>booking appoinment,view report</p>
+                            <p>Booking appointments, viewing reports.</p>
                         </div>
                     </div>
 
                     <div class="card" onclick="toggleCard(this)">
                         <div class="card-header">
-                            <h3>how to book an appointment</h3>
+                            <h3>How to book an appointment?</h3>
                         </div>
                         <div class="card-content">
-                            <p>click the make appointment button,then click add appointment.Next,fill in the information ,click book appointment button 
-
-                            </p>
+                            <p>Click the "Make Appointment" button, then click "Add Appointment". Next, fill in the information and click the "Book Appointment" button.</p>
                         </div>
                     </div>
-                    </div>
                 </div>
-            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-            <script>
-                function toggleCard(card) {
-                    card.classList.toggle('active');
-                }
-            </script>
+<script>
+    function toggleCard(card) {
+        card.classList.toggle('active');
+    }
+</script>
 
-            @endsection
-  
-
+@endsection

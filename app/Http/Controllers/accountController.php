@@ -15,7 +15,7 @@ class accountController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'contactNumber' => 'required|string|max:15',
+            'contactNumber' => 'required|string|size:11',
             'gender' => 'required|string',
             'maykad' => 'required|string|size:12',
             'dateOfBirth' => 'required|date',
@@ -49,7 +49,17 @@ class accountController extends Controller
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
+
+    public function destroy(Request $request)
+    {
+        // Perform account deletion logic
+        $user = Auth::user();
+        $user->delete();
+
+        // Logout the user
+        Auth::logout();
+
+        // Redirect to the home page or another route
+        return redirect()->route('login');
+    }
 }
-
-
-

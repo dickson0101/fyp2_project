@@ -27,6 +27,8 @@ class InventoryController extends Controller
             'expDate' => $request->expireDate,
             'stock' => $request->quantity, // Updated from stock to quantity
             'price' => $request->prices,
+            'batch' => $request->batchNo,
+            'appDate' => $request->dateAppro,
             'image' => $imageName,
             'publisher' => $request->publishers,
         ]);
@@ -60,6 +62,8 @@ class InventoryController extends Controller
         $product->description = $request->medicationDescription;
         $product->expDate = $request->expireDate;
         $product->price = $request->prices;
+        $product->batch = $request->batchNo;
+        $product->appDate = $request->dateAppro;
         $product->publisher = $request->publishers;
         $product->stock = $request->quantity; // Updated from stock to quantity
 
@@ -87,4 +91,20 @@ class InventoryController extends Controller
 
         return redirect()->route('showProduct')->with('success', 'Product deleted successfully');
     }
+
+    public function search(Request $request)
+{
+    // 获取搜索关键字
+    $searchTerm = $request->input('searchTerm');
+
+    // 查询药物，支持模糊匹配
+    $products = Product::where('name', 'like', "%{$searchTerm}%")
+                        ->orWhere('description', 'like', "%{$searchTerm}%")
+                        ->orWhere('batchNo', 'like', "%{$searchTerm}%")
+                        ->get();
+
+    // 返回结果到视图
+    return view('showProduct')->with('products', $products);
+}
+
 }

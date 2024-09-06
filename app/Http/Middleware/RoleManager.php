@@ -18,27 +18,55 @@ class RoleManager
      */
     public function handle(Request $request, Closure $next, $role)
     {
+        // Ensure user is authenticated
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $authUserRole = Auth::user()->role;
 
-        // 检查用户角色是否匹配
-        if (($role == 'doctor' && $authUserRole == 0) ||
-            ($role == 'nurse' && $authUserRole == 1) ||
-            ($role == 'patient' && $authUserRole == 2)) {
+        // Check if the user's role matches the required role
+        if ($this->roleMatches($role, $authUserRole)) {
             return $next($request);
         }
 
-        // 根据用户角色重定向到相应页面
+        // Redirect based on user role
+        return $this->redirectBasedOnRole($authUserRole);
+    }
+
+    /**
+     * Check if the user's role matches the required role.
+     *
+     * @param  string  $role
+     * @param  int  $authUserRole
+     * @return bool
+     */
+    private function roleMatches($role, $authUserRole)
+    {
+        $roles = [
+            'doctor' => 0,
+            'nurse' => 1,
+            'homePatient' => 2,
+        ];
+
+        return isset($roles[$role]) && $roles[$role] === $authUserRole;
+    }
+
+    /**
+     * Redirect user based on their role.
+     *
+     * @param  int  $authUserRole
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function redirectBasedOnRole($authUserRole)
+    {
         switch ($authUserRole) {
             case 0:
-                return redirect()->route('doctor');
+                return redirect()->route('homeDoctor');
             case 1:
-                return redirect()->route('nurse');
+                return redirect()->route('nursePage');
             case 2:
-                return redirect()->route('patient');
+                return redirect()->route('homePatient');
             default:
                 return redirect()->route('login');
         }

@@ -44,7 +44,6 @@
 </head>
 <body>
 <div class="container">
-    <!-- Sidebar and other content -->
     <div class="main-content">
         <div class="header">
             <a href="{{ route('doctorPage') }}"> 
@@ -65,6 +64,16 @@
             </div>
 
             <div class="form-group">
+                <label for="DoctorEmail">Email:</label>
+                <input class="form-control" type="email" id="DoctorEmail" name="DoctorEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="DoctorPassword">Password:</label>
+                <input class="form-control" type="password" id="DoctorPassword" name="DoctorPassword" required>
+            </div>
+
+            <div class="form-group">
                 <label for="DoctorImage">Image</label>
                 <input class="form-control" type="file" id="DoctorImage" name="DoctorImage" accept="image/*">
             </div>
@@ -81,17 +90,17 @@
 
             <div class="form-group">
                 <label for="Telephone">Telephone Number:</label>
-                <input class="form-control" type="number" id="Telephone" name="Telephone" pattern="^60\d{9}$" maxlength="11" required>
-                <small>Must be 11 digits and start with 60</small>
+                <input class="form-control" type="number" id="Telephone" name="Telephone" required>
+                <p id="telephoneError" style="color: red; display: none;">Telephone number must be exactly 11 digits.</p>
             </div>
 
             <div class="form-group">
                 <label>Language</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="Language" value="Chinese" required> Chinese</label>
-                    <label><input type="radio" name="Language" value="Tamil" required> Tamil</label>
-                    <label><input type="radio" name="Language" value="Bahasa Melayu" required> Bahasa Melayu</label>
-                    <label><input type="radio" name="Language" value="Other" required> Other</label>
+                    <label><input type="checkbox" name="Language[]" value="Chinese"> Chinese</label>
+                    <label><input type="checkbox" name="Language[]" value="Tamil"> Tamil</label>
+                    <label><input type="checkbox" name="Language[]" value="Bahasa Melayu"> Bahasa Melayu</label>
+                    <label><input type="checkbox" name="Language[]" value="Other"> Other</label>
                 </div>
             </div>
 
@@ -121,6 +130,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const doctorForm = document.getElementById('doctorForm');
+    const telephoneInput = document.getElementById('Telephone');
+    const telephoneError = document.getElementById('telephoneError');
     const dateTimeContainers = document.getElementById('dateTimeContainers');
     const addDateButton = document.getElementById('addDate');
     const hiddenInput = document.getElementById('datesAndTimes');
@@ -188,6 +200,17 @@ document.addEventListener('DOMContentLoaded', function() {
         generateTimeSlots(newContainer);
         setMinDate(); // Update the min date for the new date input
     };
+
+    doctorForm.addEventListener('submit', function(event) {
+        // Validate telephone number length
+        if (telephoneInput.value.length !== 11) {
+            event.preventDefault();
+            telephoneError.style.display = 'block';
+            telephoneInput.focus();
+        } else {
+            telephoneError.style.display = 'none';
+        }
+    });
 
     // Initial setup
     generateTimeSlots(document.querySelector('.date-time-container'));

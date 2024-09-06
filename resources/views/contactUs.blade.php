@@ -172,11 +172,11 @@
         <div class="sidebar-header">
             <div class="profile-pic"></div>
             <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
+            <h2 class="username">{{ Auth::user()->name }}</h2>
+            <p class="email">{{ Auth::user()->email }}</p>
             </div>
         </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        <form action="{{ route('logout2') }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="logout-btn">Log out</button>
         </form>
@@ -186,14 +186,12 @@
             <a href="{{ route('contactUs') }}" class="nav-link active">Contact Us</a>
             <a href="{{ route('F&Q') }}" class="nav-link">F&Q</a>
             <a href="{{ route('feedback') }}" class="nav-link">Feedback</a>
-            <a href="{{ route('scheduler') }}" class="nav-link">Account</a>
+            <a href="{{ route('account') }}" class="nav-link">Account</a>
         </nav>
     </div>
 
     <div class="date-container">
-        <p class="date-label">Today's Date</p>
-        <p class="date-value">{{ now()->format('Y-m-d') }}</p>
-    </div>
+        
 
     <div class="content">
         <h1>Contact Us</h1>

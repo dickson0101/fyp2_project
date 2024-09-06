@@ -32,9 +32,9 @@ class AuthenticatedSessionController extends Controller
         \Log::info('User role:', ['role' => $authUserRole]);
     
         if ($authUserRole == 0) {
-            return redirect()->intended('doctor/dashboard');
+            return redirect()->intended('homeDoctor');
         } else if ($authUserRole == 1) {
-            return redirect()->intended('nurse/dashboard');
+            return redirect()->intended('nursePage');
         } else if ($authUserRole == 2) {
             return redirect()->intended('homePatient');
         }

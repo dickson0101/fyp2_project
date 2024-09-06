@@ -28,10 +28,13 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function viewPatient()
+    public function showHomePatient()
     {
-        return view('homePatient');
+        $appointments = Appointment::all(); 
+        $appointment = Appointment::where('patient_id', auth()->id())->latest()->first();
+        return view('homePatient', compact('appointment'));
     }
+    
 
     public function viewDoctor()
     {
@@ -42,5 +45,10 @@ class HomeController extends Controller
     public function viewNurse()
     {
         return view('nursePage');
+    }
+
+    public function homePage()
+    {
+        return view('homePage');
     }
 }

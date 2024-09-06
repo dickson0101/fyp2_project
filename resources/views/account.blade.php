@@ -20,12 +20,10 @@
             color: #666;
             font-weight: lighter;
         }
-        .field {
-            position: relative;
-        }
         form {
             width: 500px;
             margin: 0 auto;
+            padding: 20px;
         }
         input, button, textarea {
             position: relative;
@@ -58,60 +56,41 @@
             transition: all 0.3s;
             cursor: pointer;
         }
-        .sidebar {
-            width: 250px;
+        .header {
             background-color: #f4f4f4;
             padding: 20px;
+            text-align: center;
             position: fixed;
-            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
         }
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+        .header button {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
         }
-        .profile-pic {
-            width: 50px;
-            height: 50px;
-            background-color: #ccc;
-            border-radius: 50%;
-            margin-right: 10px;
+        .header button:hover {
+            background-color: #555;
         }
-        
-        
-       
-        
         .date-container {
-            margin-left: 270px; /* Adjust this value as needed */
             padding: 20px;
+            text-align: center;
         }
         .recentOrders {
-            margin-left: 270px; /* Adjust this value as needed */
             padding: 20px;
+            /* Adjust this value as needed */
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="profile-pic"></div>
-            <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
-            </div>
-        </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="logout-btn">Log out</button>
-        </form>
-        <nav class="sidebar-nav">
-            <a href="{{ route('homePatient') }}" class="nav-link">Home</a>
-            <a href="{{ route('aboutUs') }}" class="nav-link ">About Us</a>
-            <a href="{{ route('contactUs') }}" class="nav-link">Contact Us</a>
-            <a href="{{ route('F&Q') }}" class="nav-link">F&Q</a>
-            <a href="{{ route('feedback') }}" class="nav-link">Feedback</a>
-            <a href="{{ route('account') }}" class="nav-link active">Account</a>
-        </nav>
+    <div class="header">
+        <a href="{{ route('homePatient') }}">
+            <button class="btn btn-light">← Back</button>
+        </a>
     </div>
 
     <div class="date-container">
@@ -304,6 +283,19 @@
                     <div class="col-md-6 offset-md-4">
                         <button class="button.account" type="submit" class="btn btn-primary">
                             {{ __('Save Changes') }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Delete Account Form -->
+            <form method="POST" action="{{ route('account.destroy') }}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <div class="row mb-0">
+                    <div class="col-md-6 offset-md-4">
+                        <button class="button.account" type="submit" style="background-color: red;">
+                            {{ __('Delete Account') }}
                         </button>
                     </div>
                 </div>

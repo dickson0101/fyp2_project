@@ -133,6 +133,8 @@
         }
     </style>
 </head>
+<body>
+    
 
 <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 <div class="main-content">
@@ -144,8 +146,20 @@
     </div>
     <br>
     <br>
-<body>
+
 <h1>Write Patient Report</h1>
+
+<div class="card">
+    <div class="card-header">Patient Info</div>
+    <div class="card-body">
+        <p><strong>Name:</strong> {{ $patient->name }}</p>
+        <p><strong>Email:</strong> {{ $patient->email }}</p>
+    </div>
+</div>
+
+<a href="{{ route('homeDoctor') }}">
+                <button class="btn btn-light">← Back</button>
+            </a>
 <br>
 <form method="post" action="{{ route('Patient_Report.pdf') }}" enctype="multipart/form-data">
     @csrf
@@ -178,6 +192,9 @@
     </div>
     <ul id="file-list"></ul>
     <input type="submit" value="Create PDF and ZIP">
+
+    <a href="{{ route('medications.list') }}" class="btn btn-secondary" style="margin-top: 1rem;">Go to Medication List</a>
+
 </form>
 </div>
 </body>

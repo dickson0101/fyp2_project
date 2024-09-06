@@ -1,30 +1,26 @@
 @extends('layout')
 
 @section('content')
-
-<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-
 <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="profile-pic"></div>
             <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
+                <h2 class="username">{{ Auth::user()->name }}</h2>
+                <p class="email">{{ Auth::user()->email }}</p>
             </div>
         </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        <form action="{{ route('logout2') }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="logout-btn">Log out</button>
         </form>
         <nav class="sidebar-nav">
             <a href="{{ route('homePatient') }}" class="nav-link">Home</a>
-            <a href="{{ route('scheduler') }}" class="nav-link">Schedule</a>
             <a href="{{ route('aboutUs') }}" class="nav-link">About Us</a>
             <a href="{{ route('contactUs') }}" class="nav-link">Contact Us</a>
             <a href="{{ route('F&Q') }}" class="nav-link">F&Q</a>
-            <a href="{{ route('feedback') }}" class="nav-link">Feedback</a>
+            <a href="{{ route('feedback') }}" class="nav-link active">Feedback</a>
             <a href="{{ route('account') }}" class="nav-link">Account</a>
         </nav>
     </div>
@@ -59,14 +55,29 @@
 </div>
 
 <style>
+    body, h1, h2, h3, p {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        display: flex;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
     .sidebar {
         width: 250px;
         background-color: #f8f9fa;
         height: 100vh;
+        padding: 20px;
         position: fixed;
         top: 0;
         left: 0;
-        padding: 20px;
     }
 
     .sidebar-header {
@@ -78,27 +89,31 @@
     .sidebar-nav a {
         display: block;
         padding: 10px;
-        color: #333;
+
         text-decoration: none;
         margin-bottom: 10px;
     }
 
     .sidebar-nav a.active,
     .sidebar-nav a:hover {
-        background-color: white;
-        color: #fff;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
     }
 
     .main-content {
-        margin-left: 270px;
+        margin-left: 270px; /* Adjusted to make space for the sidebar */
         padding: 20px;
+        
     }
 
     .container {
         border-radius: 5px;
-        background-color: #000;
-        padding: 20px;
         color: #fff;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
     }
 
     .form-control {
@@ -124,5 +139,4 @@
         background-color: #45a049;
     }
 </style>
-
 @endsection

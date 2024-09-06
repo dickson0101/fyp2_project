@@ -33,27 +33,17 @@
         .date-time-container {
             margin-bottom: 20px;
         }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .radio-group label {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="profile-pic"></div>
-                <div>
-                    <h2 class="username">Administrator</h2>
-                    <p class="email">admin@edoc.com</p>
-                </div>
-            </div>
-            <button class="logout-btn">Log out</button>
-            <nav class="sidebar-nav">
-                <a href="{{ route('nursePage2') }}" class="nav-link ">Dashboard</a>
-                <a href="#" class="nav-link active">Doctors</a>
-                <a href="#" class="nav-link">Schedule</a>
-                <a href="#" class="nav-link">Appointment</a>
-                <a href="#" class="nav-link">Patients</a>
-            </nav>
-        </div>
+    
         <div class="main-content">
             <div class="header">
                 <a href="{{ route('doctorPage') }}"> 
@@ -72,6 +62,15 @@
                     <input class="form-control" type="text" id="DoctorName" name="DoctorName" required value="{{ $doctor->name }}">
                 </div>
                 <div class="form-group">
+                    <label for="DoctorEmail">Email:</label>
+                    <input class="form-control" type="email" id="DoctorEmail" name="DoctorEmail" required value="{{ $doctor->email }}">
+                </div>
+                <div class="form-group">
+                    <label for="DoctorPassword">Password:</label>
+                    <input class="form-control" type="password" id="DoctorPassword" name="DoctorPassword">
+                    <small>Leave blank if you don't want to change the password.</small>
+                </div>
+                <div class="form-group">
                     <img src="{{ asset('images/'.$doctor->image) }}" alt="Doctor Image" width="200" height="200" class="img-fluid"><br>
                     <label for="DoctorImage">Image</label>
                     <input class="form-control" type="file" id="DoctorImage" name="DoctorImage" accept="image/*">
@@ -86,12 +85,22 @@
                 </div>
                 <div class="form-group">
                     <label for="Telephone">Telephone Number:</label>
-                    <input class="form-control" type="text" id="Telephone" name="Telephone" required value="{{ $doctor->telephone }}">
+                    <input class="form-control" type="number" id="Telephone" name="Telephone" required value="{{ $doctor->telephone }}">
+                    <p id="telephoneError" style="color: red; display: none;">Telephone number must be exactly 11 digits.</p>
                 </div>
                 <div class="form-group">
-                    <label for="Language">Language</label>
-                    <input class="form-control" type="text" id="Language" name="Language" required value="{{ $doctor->language }}">
+                    <label>Language</label>
+                    <div class="radio-group">
+                        @php
+                            $languages = explode(', ', $doctor->language);
+                        @endphp
+                        <label><input type="checkbox" name="Language[]" value="Chinese" {{ in_array('Chinese', $languages) ? 'checked' : '' }}> Chinese</label>
+                        <label><input type="checkbox" name="Language[]" value="Tamil" {{ in_array('Tamil', $languages) ? 'checked' : '' }}> Tamil</label>
+                        <label><input type="checkbox" name="Language[]" value="Bahasa Melayu" {{ in_array('Bahasa Melayu', $languages) ? 'checked' : '' }}> Bahasa Melayu</label>
+                        <label><input type="checkbox" name="Language[]" value="Other" {{ in_array('Other', $languages) ? 'checked' : '' }}> Other</label>
+                    </div>
                 </div>
+                
                 <div id="dateTimeContainers">
                     <!-- Date-Time containers will be generated here -->
                 </div>
@@ -106,7 +115,9 @@
             const dateTimeContainers = document.getElementById('dateTimeContainers');
             const addDateButton = document.getElementById('addDate');
             const hiddenInput = document.getElementById('datesAndTimes');
-            const doctorDatesAndTimes = @json($doctor->datesAndTimes); // Assuming datesAndTimes is a JSON array
+            const doctorDatesAndTimes = @json($doctor->datesAndTimes);
+            const telephoneInput = document.getElementById('Telephone');
+            const telephoneError = document.getElementById('telephoneError');
 
             function generateTimeSlots(container, selectedSlots = []) {
                 const timeSlotsContainer = container.querySelector('.time-slots');
@@ -198,6 +209,24 @@
             // Initial setup
             loadExistingData();
             setMinDate(); // Set the min date for existing date inputs
+
+            // Add client-side validation for passwords and telephone
+            document.getElementById('doctorForm').addEventListener('submit', function(event) {
+                const password = document.getElementById('DoctorPassword').value;
+                if (password && (password.length < 8 || !/\d/.test(password) || !/[a-zA-Z]/.test(password))) {
+                    alert('Password must be at least 8 characters long and include both letters and numbers.');
+                    event.preventDefault(); // Prevent form submission
+                }
+
+                // Validate telephone number length
+                if (telephoneInput.value.length !== 11) {
+                    event.preventDefault();
+                    telephoneError.style.display = 'block';
+                    telephoneInput.focus();
+                } else {
+                    telephoneError.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

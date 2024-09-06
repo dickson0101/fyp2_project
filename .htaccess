@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+
+    # Redirect requests to the public directory if not already there
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Handle root requests and index.php redirection
+    RewriteRule ^(/)?$ public/index.php [L]
+</IfModule>
+1a1b1c1dAAA

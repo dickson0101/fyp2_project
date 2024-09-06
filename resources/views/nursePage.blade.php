@@ -4,72 +4,69 @@
 <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 
 <div class="container">
-    
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="profile-pic"></div>
             <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
+                <h2 class="username">{{ Auth::user()->name }}</h2>
+                <p class="email">{{ Auth::user()->email }}</p>
             </div>
         </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        <form action="{{ route('logout2') }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="logout-btn">Log out</button>
         </form>
         <nav class="sidebar-nav">
-        <a href="{{ route('nursePage') }}" class="nav-link">Home</a>
-            <a href="{{ route('doctorPage') }}" class="nav-link ">Doctors</a>
-            <a href="#" class="nav-link">Schedule</a>
-            <a href="{{ route('showProduct') }}" class="nav-link ">Mediation</a>
-            <a href="{{ route('medications.list') }}" class="nav-link active ">payment</a>
-            <a href="{{ route('account') }}" class="nav-link">Account</a>
-        </nav>
-       
-    </div>
-
-
-<div class="main-content">
-    <div class="header">
-        
-        <div class="date-container">
-            <p class="date-label">Today's Date</p>
-            <p class="date-value">{{ now()->format('Y-m-d') }}</p>
-        </div>
-    </div>
-
-    @csrf
-    <div class="cardBox">
-    <a href="{{route('appointment')}}" class="card"> 
-        <div>
-            <div class="cardName">Make Appointment</div>
-        </div>
-        <div class="iconBx">
-            <ion-icon name="today-outline"></ion-icon>
-        </div>
-    </a>
-
-        <a href="viewReport.html" class="card"> 
-            <div>
-                <div class="cardName">View Report</div>
-            </div>
-            <div class="iconBx">
-                <ion-icon name="reader-outline"></ion-icon>
-            </div>
-        </a>
-
-        <a href="{{route('medications.list')}}">
-           <div class="card">
-                <div class="cardName">payment</div>
             
-            <div class="iconBx">
-                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-            </div>
-            </div>
-        </a>
+                <a href="{{ route('nursePage') }}" class="nav-link active">Home</a>
+                <a href="{{ route('doctorPage') }}" class="nav-link">Doctors</a>
+                <a href="{{ route('appointmentPage') }}" class="nav-link">Appointment</a>
+            
+            
+                <a href="{{ route('account') }}" class="nav-link">Account</a>
+          
+        </nav>
+    </div>
 
-        <a href="{{route('showProduct')}}" class="card"> 
+    <div class="main-content">
+        <div class="header">
+            <div class="date-container">
+                <p class="date-label">Today's Date</p>
+                <p class="date-value">{{ now()->format('Y-m-d') }}</p>
+            </div>
+        </div>
+
+        <div class="cardBox">
+            <a href="{{ route('appointmentPage') }}" class="card"> 
+                <div>
+                    <div class="cardName">Make Appointment</div>
+                </div>
+                <div class="iconBx">
+                    <ion-icon name="today-outline"></ion-icon>
+                </div>
+            </a>
+
+            <a href="{{ route('nurseReport') }}" class="card"> 
+                <div>
+                    <div class="cardName">View Report</div>
+                </div>
+                <div class="iconBx">
+                    <ion-icon name="reader-outline"></ion-icon>
+                </div>
+            </a>
+
+            
+                <a href="{{ route('nurseList') }}" class="card"> 
+                    <div>
+                        <div class="cardName">Payment</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="cash-outline"></ion-icon>
+                    </div>
+                </a>
+
+                <a href="{{route('showProduct')}}" class="card"> 
             <div>
                 <div class="cardName">manage inventory</div>
             </div>
@@ -77,45 +74,69 @@
                 <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
             </div>
         </a>
-        
 
-    
-</div>
-<div class="appointments-sessions-grid">
-            <div class="appointments-box">
-                <h3 class="box-title">Upcoming Appointments</h3>
-                <p class="box-description">Here's quick access to upcoming appointments. More details are available in the Appointment section.</p>
-                <table class="appointments-table">
-                    <thead>
-                        <tr>
-                            <th>Doctor Name</th>
-                            <th>Appointment Date</th>
-                            <th>Appointment Type</th>
-                            <th>Time Slot</th>
-                            <th>Speciality</th>
-                        </tr>
-                    </thead>
-                    
-                </table>
-                <button class="show-all-button">Show all Appointments</button>
+        <a href="{{route('doctorPage')}}" class="card"> 
+            <div>
+                <div class="cardName">manage doctor</div>
             </div>
-            <div class="sessions-box">
-                <h3 class="box-title">Upcoming Sessions until Next Friday</h3>
-                <p class="box-description">Here's quick access to upcoming sessions scheduled until 7 days. Add, remove, and more features are available in the @Schedule section.</p>
-                <table class="sessions-table">
+            <div class="iconBx">
+                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </div>
+        </a>
+
+        
+        <a href="{{route('video')}}">
+           <div class="card">
+                <div class="cardName">video</div>
+            
+            <div class="iconBx">
+                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </div>
+            </div>
+        </a>
+           
+        </div>
+
+        <div class="table-responsive">
+            <h2>Patient Appointments</h2>
+            @if($appointments->isEmpty())
+                <p>No upcoming appointments.</p>
+            @else
+                <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Session Title</th>
+                            <th>Patient</th>
                             <th>Doctor</th>
-                            <th>Scheduled Date & Time</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Add table rows here if needed -->
+                        @foreach($appointments as $appointment)
+                           @php
+                                $patientName = App\Models\User::find($appointment->patient_id)->name ?? 'N/A';
+                            @endphp
+                            <tr>
+                                <td>{{ $patientName }}</td>
+                            <td>{{$appointment->doctor}}</td>
+                                <td>{{ $appointment->appointmentDate }}</td>
+                                <td>{{ json_decode($appointment->timeSlot)[0] ?? 'N/A' }}</td>
+                                <td>{{ ucfirst($appointment->appointmentType) }}</td>
+                                <td>
+                                    <a href="{{ route('appointmentEdit', ['id' => $appointment->id]) }}" class="btn btn-warning btn-xs">Edit</a>
+                                    <form action="{{ route('deleteAppointment', ['id' => $appointment->id]) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
-                <button class="show-all-button">Show all Sessions</button>
-            </div>
+            @endif
         </div>
     </div>
 </div>

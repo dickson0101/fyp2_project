@@ -63,19 +63,20 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'contactNumber' => $data['contactNumber'],
-            'gender' => $data['gender'],
-            'mykad' => $data['maykad'],
-            'dateOfBirth' => $data['dateOfBirth'],
-            'address' => $data['address'],
-            'postcode' => $data['postcode'],
-            'state' => $data['state'],
-            'city' => $data['city'],
-            'password' => Hash::make($data['password']),
-        ]);
-    }
+{
+    return User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'contactNumber' => $data['contactNumber'],
+        'gender' => $data['gender'],
+        'maykad' => $data['maykad'],
+        'dateOfBirth' => $data['dateOfBirth'],
+        'address1' => $data['address1'],
+        'address2' => $data['address2'] ?? null, // 处理可能为空的字段
+        'postcode' => $data['postcode'],
+        'state' => $data['state'],
+        'city' => $data['city'],
+        'password' => Hash::make($data['password']),
+    ]);
+}
 }

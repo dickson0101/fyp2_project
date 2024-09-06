@@ -54,6 +54,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="Batch No">Batch No</label>
+                    <input class="form-control" type="text" id="batchNo" name="batchNo" required>
+                </div>
+                
+
+                <div class="form-group">
+                    <label for="dateAppro">date of approval</label>
+                    <input class="form-control" type="date" id="dateAppro" name="dateAppro" required>
+                </div>
+                <div class="form-group">
                     <label for="medicationImage">Image</label>
                     <input class="form-control" type="file" id="medicationImage" name="medicationImage">
                 </div>

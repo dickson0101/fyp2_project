@@ -8,10 +8,7 @@ use Stripe\Checkout\Session;
 
 class StripeController extends Controller
 {
-    public function index()
-    {
-        return view('payment');
-    }
+   
 
     public function checkout(Request $request)
     {
@@ -37,8 +34,8 @@ class StripeController extends Controller
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => route('success'),
-                'cancel_url' => route('medications.list'),
+                'success_url' => route('nursePage'),
+                'cancel_url' => route('nurseList'),
             ]);
 
             return redirect()->away($session->url);

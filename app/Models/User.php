@@ -23,6 +23,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'doctor_id',
+        'contactNumber',
+        'gender',
+        'maykad',
+        'dateOfBirth',
+        'address1',
+        'address2',
+        'postcode',
+        'state',
+        'city',
+        'patient_id',
     ];
 
     /**
@@ -34,6 +46,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function appointments() 
+    {
+        return $this->hasMany(Appointment::class);
+    }
 
     /**
      * The attributes that should be cast.

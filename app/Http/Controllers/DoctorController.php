@@ -4,78 +4,133 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Doctor;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-class DoctorController extends Controller{
+class DoctorController extends Controller
+{
+    // Add Doctor Method
     public function add(Request $request)
     {
-        // 处理医生图像
+        // Validate request data
+        $validator = Validator::make($request->all(), [
+            'DoctorName' => 'required|string|max:255',
+            'DoctorEmail' => 'required|email|unique:users,email',
+            'DoctorPassword' => 'required|string|min:8',
+            'Certificate' => 'required|string|max:255',
+            'Specialist' => 'required|string|max:255',
+            'Telephone' => 'required|digits:11',
+            'Language' => 'required|array',
+            'DoctorImage' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'datesAndTimes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Handle DoctorImage
+        $imageName = 'empty.jpg';
         if ($request->hasFile('DoctorImage')) {
             $image = $request->file('DoctorImage');
             $imageName = time() . '-' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
-        } else {
-            $imageName = 'empty.jpg';
         }
-    
-        // 处理日期和时间槽
-        $datesAndTimes = $request->input('datesAndTimes');
-    $datesAndTimesJson = $datesAndTimes ? json_decode($datesAndTimes, true) : null;
 
-    
-        // 创建新医生记录
-        Doctor::create([
+        // Handle dates and times
+        $datesAndTimesJson = $request->input('datesAndTimes') ? json_decode($request->input('datesAndTimes'), true) : null;
+
+        // Create new doctor record
+        $doctor = Doctor::create([
             'name' => $request->input('DoctorName'),
             'image' => $imageName,
             'certificate' => $request->input('Certificate'),
             'specialist' => $request->input('Specialist'),
             'telephone' => $request->input('Telephone'),
-            'language' => $request->input('Language'),
-           'dates_and_times' => $datesAndTimesJson  // 使用处理后的 JSON 数据
+            'language' => implode(', ', $request->input('Language')),  // Storing the languages as a comma-separated string
+            'dates_and_times' => json_encode($datesAndTimesJson),
         ]);
-    
+
+        // Create user account for doctor
+        User::create([
+            'name' => $request->input('DoctorName'),
+            'email' => $request->input('DoctorEmail'),
+            'password' => Hash::make($request->input('DoctorPassword')),
+            'role' => 0, // Set role to 0 for doctor
+            'doctor_id' => $doctor->id,
+        ]);
+
         return redirect()->route('doctorPage')->with('success', 'Doctor added successfully!');
     }
 
     public function edit($id)
     {
         $doctor = Doctor::findOrFail($id);
-        return view('doctorEdit')->with('doctor', $doctor);
+        return view('doctorEdit', compact('doctor'));
     }
-
     public function update(Request $request, $id)
-{
-    $doctor = Doctor::findOrFail($id);
+    {
+        // Validate request data
+        $validator = Validator::make($request->all(), [
+            'DoctorName' => 'required|string|max:255',
+            'DoctorEmail' => 'required|email|unique:users,email,' . User::where('doctor_id', $id)->first()->id,
+            'DoctorPassword' => 'nullable|string|min:8',
+            'Certificate' => 'required|string|max:255',
+            'Specialist' => 'required|string|max:255',
+            'Telephone' => 'required|digits:11',
+            'Language' => 'required|array',
+            'DoctorImage' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'datesAndTimes' => 'nullable|string',
+        ]);
 
-    // 处理图像
-    if ($request->hasFile('DoctorImage')) {
-        $image = $request->file('DoctorImage');
-        $imageName = time() . '-' . $image->getClientOriginalName();
-        $image->move(public_path('images'), $imageName);
-        $doctor->image = $imageName;
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Find the doctor record
+        $doctor = Doctor::findOrFail($id);
+
+        // Handle image upload and update
+        if ($request->hasFile('DoctorImage')) {
+            $image = $request->file('DoctorImage');
+            $imageName = time() . '-' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $doctor->image = $imageName;
+        }
+
+        // Update doctor details
+        $doctor->name = $request->input('DoctorName');
+        $doctor->certificate = $request->input('Certificate');
+        $doctor->specialist = $request->input('Specialist');
+        $doctor->telephone = $request->input('Telephone');
+        $doctor->language = implode(', ', $request->input('Language'));
+
+        // Handle dates and times
+        $datesAndTimesJson = $request->input('datesAndTimes') ? json_decode($request->input('datesAndTimes'), true) : null;
+        $doctor->dates_and_times = json_encode($datesAndTimesJson);
+
+        $doctor->save();
+
+        // Update the associated user record if it exists
+        $user = User::where('doctor_id', $doctor->id)->first();
+        if ($user) {
+            $user->name = $request->input('DoctorName');
+            $user->email = $request->input('DoctorEmail');
+
+            // Update password if provided
+            if ($request->filled('DoctorPassword')) {
+                $user->password = Hash::make($request->input('DoctorPassword'));
+            }
+
+            $user->save();
+        }
+
+        return redirect()->route('doctorPage')->with('success', 'Doctor and associated user updated successfully!');
     }
 
-    // 更新医生信息
-    $doctor->name = $request->input('DoctorName');
-    $doctor->certificate = $request->input('Certificate');
-    $doctor->specialist = $request->input('Specialist');
-    $doctor->telephone = $request->input('Telephone');
-    $doctor->language = $request->input('Language');
 
-    // 处理日期和时间槽
-    $datesAndTimes = $request->input('datesAndTimes');
-    $datesAndTimesJson = $datesAndTimes ? json_decode($datesAndTimes, true) : null;
-
-    // 更新日期和时间槽
-    $doctor->dates_and_times = $datesAndTimesJson;
-
-    $doctor->save();
-
-    return redirect()->route('doctorPage')->with('success', 'Doctor updated successfully!');
-}
-
-
-    // 获取所有医生的信息
     public function view()
     {
         $doctors = Doctor::all();
@@ -84,13 +139,13 @@ class DoctorController extends Controller{
 
     public function search(Request $request)
     {
-        $keyword = $request->input('searchDoctor'); // Get the search keyword
-        $doctors = Doctor::query()
-            ->where('name', 'like', '%' . $keyword . '%')
-            ->orWhere('specialist', 'like', '%' . $keyword . '%')
-            ->get();
-
-        return view('appointment', ['doctors' => $doctors]);
+        $query = $request->input('search');
+        $doctors = Doctor::where(function ($q) use ($query) {
+            $q->where('name', 'like', "%$query%")
+              ->orWhere('email', 'like', "%$query%");
+        })->get();
+    
+        return view('doctor.index', compact('doctors'));
     }
 
     public function delete($id)
@@ -101,14 +156,31 @@ class DoctorController extends Controller{
             return redirect()->route('doctorPage')->with('error', 'Doctor not found');
         }
 
-        // 删除图像
+        // Delete associated user account
+        $user = User::where('doctor_id', $doctor->id)->first();
+        if ($user) {
+            $user->delete();
+        }
+
+        // Delete doctor's image file if it exists
         $imagePath = public_path('images') . '/' . $doctor->image;
         if (file_exists($imagePath)) {
             unlink($imagePath);
         }
 
+        // Delete the doctor record
         $doctor->delete();
 
-        return redirect()->route('doctorPage')->with('success', 'Doctor deleted successfully');
+        return redirect()->route('doctorPage')->with('success', 'Doctor and associated user deleted successfully');
+    }
+
+    public function confirmDelete($id)
+    {
+        $doctor = Doctor::find($id);
+        if (!$doctor) {
+            return redirect()->route('doctorPage')->with('error', 'Doctor not found');
+        }
+
+        return view('confirmDelete', ['doctor' => $doctor]);
     }
 }

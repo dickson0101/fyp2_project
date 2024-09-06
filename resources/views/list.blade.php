@@ -3,85 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medications List</title>
+    <title>Doctor List</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #f8f9fa;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 20px;
-        }
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .main-content {
-            margin-left: 270px;
-            padding: 20px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .date-container {
-            text-align: right;
-        }
-        .table-responsive {
-            margin-top: 20px;
-        }
-        .text-center {
-            text-align: center;
-        }
+        /* Your existing CSS styles */
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="profile-pic"></div>
-            <div>
-                <h2 class="username">Administrator</h2>
-                <p class="email">admin@edoc.com</p>
-            </div>
-        </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn btn-light">Log out</button>
-        </form>
-        <nav class="sidebar-nav">
-            <a href="{{ route('nursePage') }}" class="nav-link">Home</a>
-            <a href="{{ route('doctorPage') }}" class="nav-link">Doctors</a>
-            <a href="#" class="nav-link">Schedule</a>
-            <a href="{{ route('showProduct') }}" class="nav-link">Medication</a>
-            <a href="{{ route('account') }}" class="nav-link">Account</a>
-        </nav>
-    </div>
-
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <a href="{{ route('nursePage') }}">
+            <a href="{{ route('pdf.index') }}">
                 <button class="btn btn-light">← Back</button>
             </a>
+            
             <div class="date-container">
                 <p class="date-label">Today's Date:</p>
                 <p class="date-value">{{ now()->format('Y-m-d') }}</p>
             </div>
         </div>
-
-        @csrf
 
         <h1 class="text-center">Medications List</h1>
         <div class="text-center mb-3">
@@ -108,7 +50,6 @@
                 </thead>
                 <tbody>
                     @php
-                        $totalAmount = $medications->sum('price');
                         $groupedMedications = $medications->groupBy('name');
                     @endphp
                     @foreach($groupedMedications as $name => $patientMedications)
@@ -122,7 +63,8 @@
                                 <td>{{ $medication->dosage }}</td>
                                 <td>{{ $medication->created_at->format('Y-m-d') }}</td>
                                 <td>
-                                    <form action="{{ route('medications.destroy', $medication->id) }}" method="POST" onsubmit="return confirmDelete()">
+                                    <a href="{{ route('medications.edit', $medication->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                    <form action="{{ route('medications.destroy', $medication->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -133,13 +75,11 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="text-center mb-3">
+            <a href="{{ route('homeDoctor') }}" class="btn btn-primary">home page</a>
+        </div>
         </div>
 
-        <form action="{{ route('checkout') }}" method="POST" class="text-center mt-4">
-            @csrf
-            <input type="hidden" name="total_amount" id="total_amount" value="{{ $totalAmount }}">
-            <button type="submit" class="btn btn-success">Checkout</button>
-        </form>
     </div>
 
     <script>

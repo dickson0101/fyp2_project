@@ -1,15 +1,14 @@
-const socket = io('http://127.0.0.1:8000'); // 确保地址和端口号正确
+const socket = io('http://127.0.0.1:8000'); // Ensure the address and port are correct
 let peerConnection;
 let localStream;
 let remoteStream;
 let mediaRecorder;
 let recordedChunks = [];
-let roomCode = '';
+let roomCode = '12345'; // Default room code, can be changed by user input
 
-// 连接到服务器
+// Connection to the server
 socket.on('connect', () => {
     console.log('Connected to server');
-    roomCode = document.getElementById('roomCode').value;
 });
 
 socket.on('disconnect', () => {
@@ -39,24 +38,23 @@ socket.on('candidate', async (candidate) => {
     }
 });
 
-function generateRandomRoomCode() {
-    return Math.floor(10000 + Math.random() * 90000).toString(); // 生成5位随机数
-}
-
-async function joinRoom(roomCodeInput) {
-    if (!roomCodeInput) {
-        roomCode = generateRandomRoomCode();
-        document.getElementById('roomCode').value = roomCode; // 显示生成的房间号
-    } else {
-        roomCode = roomCodeInput;
+function joinRoom() {
+    roomCode = document.getElementById('roomCode').value.trim();
+    if (roomCode === '') {
+        alert('Please enter a room code.');
+        return;
     }
-
     socket.emit('joinRoom', roomCode);
-    console.log(`Joining room: ${roomCode}`);
+    console.log(Joining);
     document.getElementById('joinRoomButton').disabled = true;
     document.getElementById('roomCode').disabled = true;
 }
 
+function clearRoomCode() {
+    document.getElementById('roomCode').value = '';
+    document.getElementById('joinRoomButton').disabled = false;
+    document.getElementById('roomCode').disabled = false;
+}
 
 function createPeerConnection() {
     const configuration = {
@@ -111,7 +109,41 @@ async function stopVideo() {
         peerConnection.close();
         peerConnection = null;
     }
+    console.log('Video stopped');
 }
+
+
+async function startScreenShare() {
+    try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const videoTrack = screenStream.getVideoTracks()[0];
+        const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
+
+        if (sender) {
+            await sender.replaceTrack(videoTrack);
+
+            // Trigger renegotiation after screen sharing starts
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            socket.emit('offer', offer, roomCode);
+        }
+
+        videoTrack.onended = async () => {
+            // Switch back to the camera video track after screen sharing ends
+            const cameraTrack = localStream.getVideoTracks()[0];
+            await sender.replaceTrack(cameraTrack);
+
+            // Renegotiate to go back to the camera video stream
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            socket.emit('offer', offer, roomCode);
+            console.log('Screen sharing stopped.');
+        };
+    } catch (error) {
+        console.error('Error starting screen share:', error);
+    }
+}
+
 
 function startRecording() {
     if (localStream) {
@@ -121,6 +153,9 @@ function startRecording() {
             if (event.data.size > 0) {
                 recordedChunks.push(event.data);
             }
+        };
+        mediaRecorder.onstart = function() {
+            alert('Recording has started. Please ensure confidentiality.');
         };
         mediaRecorder.onstop = function() {
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
@@ -144,31 +179,11 @@ function stopRecording() {
     }
 }
 
-async function showStats() {
-    if (peerConnection) {
-        const stats = await peerConnection.getStats();
-        let statsOutput = '';
-
-        stats.forEach(report => {
-            statsOutput += `<h2>Report: ${report.type}</h2>\n<strong>ID:</strong> ${report.id}<br>\n` +
-                           `<strong>Timestamp:</strong> ${report.timestamp}<br>\n`;
-
-            Object.keys(report).forEach(statName => {
-                if (statName !== 'id' && statName !== 'timestamp' && statName !== 'type') {
-                    statsOutput += `<strong>${statName}:</strong> ${report[statName]}<br>\n`;
-                }
-            });
-        });
-
-        document.getElementById('statsContainer').innerHTML = statsOutput;
-    } else {
-        alert('No active peer connection to show stats for.');
-    }
-}
-
-document.getElementById('joinRoomButton').addEventListener('click', () => joinRoom(document.getElementById('roomCode').value));
+// Event Listeners
 document.getElementById('startButton').addEventListener('click', startVideo);
 document.getElementById('stopButton').addEventListener('click', stopVideo);
+document.getElementById('screenShareButton').addEventListener('click', startScreenShare);
 document.getElementById('recordButton').addEventListener('click', startRecording);
 document.getElementById('stopRecordButton').addEventListener('click', stopRecording);
-document.getElementById('showStatsButton').addEventListener('click', showStats);
+document.getElementById('joinRoomButton').addEventListener('click', joinRoom);
+document.getElementById('clearRoomCodeButton').addEventListener('click', clearRoomCode);

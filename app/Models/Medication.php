@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Medication extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'medication','price', 'dosage', 'created_at'];
+    protected $fillable = ['name', 'medication','price', 'dosage', 'patient_id' ,'created_at'];
 }

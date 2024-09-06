@@ -55,6 +55,40 @@
             border-color: #007bff;
             background-color: #e9ecef;
         }
+
+        #doctor-list-container {
+        max-height: 400px; /* Adjust height as needed */
+        overflow-y: auto;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    #doctor-list {
+    max-height: 400px; /* Set the max height to control the height of the container */
+    overflow-y: auto;  /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional: add a border for visual clarity */
+    padding: 10px; /* Optional: add padding for better appearance */
+}
+
+ #searchInput, #doctorName {
+            width: 100%; /* Extend the width of search and doctor name input */
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search-container label {
+            font-weight: bold;
+        }
+
+
+        .hidden {
+    display: none; /* Hide the element from view */
+}
+
     </style>
 </head>
 <body>
@@ -69,7 +103,6 @@
 
     <form action="{{ route('appointment') }}" method="post" enctype="multipart/form-data">
     @csrf
-       
         <div class="container">
             <div class="main-content">
                 <div class="steps">
@@ -84,205 +117,100 @@
                     </div>
                 </div>
 
-                <div id="requestSpeciality" class="form-group">
-                    <label for="specialitys">Speciality</label>
-                    <select id="specialitys" name="specialitys" >
-                        <option value="">Select a Speciality</option>
-                        <option value="cardiology">Cardiology</option>
-                        <option value="neurology">Neurology</option>
-                        <option value="orthopedics">Orthopedics</option>
-                        <option value="urology">Urology</option>
-                    </select>
-                </div>
+                <h3>Search Doctor</h3>
+                
 
                 <div class="form-group">
-                    <div class="search-container">
-                        <label for="searchInput">Search:</label>
-                        <input type="text" id="searchInput" placeholder="Enter doctor name or specialty">
-                        <button type="button" id="searchButton">Search</button>
+    <div class="search-container">
+        <label for="searchInput">Search:</label>
+        <input type="text" id="searchInput" placeholder="Enter doctor name or specialty">
+        <button type="button" id="searchButton">Search</button>
+    </div>
+
+    <h3>Choose the Doctor</h3>
+<div id="doctor-list"> <!-- Updated ID here -->
+@foreach ($doctors as $doctor)
+    @foreach ($appointments as $appointment)
+        <div class="doctor-card" 
+             data-doctor-id="{{ $doctor->id }}" 
+             data-user-doctor-id="{{ $appointment->doctor_id }}">
+            <img src="{{ url('images/'.$doctor->image) }}" alt="{{ $doctor->name }}">
+            <div class="doctor-info">
+                <strong>{{ $doctor->name }}</strong><br>
+                Specialist: {{ $doctor->specialist }}<br>
+                Telephone: {{ $doctor->telephone }}<br>
+                Language: {{ $doctor->language }}<br>
+            </div>
+        </div>
+    @endforeach
+@endforeach
+</div>
+
+</div>
+
+                <div class="form-group">
+                        <label for="doctorName">Doctor Name</label><br>
+                        <input type="text" id="doctorName" name="doctorName" readonly required>
                     </div>
 
-                        
-<h3>choose the doctor</h3>
-                    <div id="doctor-list" class="form-group">
-                        @foreach ($doctors as $doctor)
-                            <div class="doctor-card" data-doctor-id="{{ $doctor->id }}" data-specialty="{{ $doctor->specialist }}">
-                                <img src="{{ url('images/'.$doctor->image) }}" alt="{{ $doctor->name }}">
-                                <div class="doctor-info">
-                                    <strong>{{ $doctor->name }}</strong><br>
-                                    Specialist: {{ $doctor->specialist }}<br>
-                                    Telephone: {{ $doctor->telephone }}<br>
-                                    Language: {{ $doctor->language }}<br>
+                    <div id="dateTimeContainers">
+                        <div class="date-time-container">
+                            <div class="form-group">
+                                <label for="ConsultationDate">Consultation Date:</label>
+                                <input class="form-control" type="date" name="consultation_dates[]" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Available Time Slots:</label>
+                                <div class="time-slots">
+                                    <!-- Time slots will be dynamically generated here -->
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-
-                    <div id="date-time-section" style="display: none;">
-                        <label for="appointmentDate">Select Date</label><br>
-                        <input type="date" id="appointmentDate" name="appointmentDate" required><br>
-
-                        <label for="timeSlots">Available Time Slots</label><br>
-                        <div id="timeSlots" class="time-slots">
-                            <!-- Time slots will be dynamically generated here -->
                         </div>
                     </div>
 
-                    <input type="hidden" name="selectedTimeSlot" id="hiddenTimeSlot">
+                    <input type="hidden" name="appointmentDT" id="appointmentDT">
 
-
-                    <div class="form-group" id="appointmentTypes">
+                    <div class="form-group" id="appointmentType">
                         <label>Appointment Type</label>
                         <label>
-                            <input type="radio" name="appointment-type" value="online" checked> Online Appointment
+                            <input type="radio" name="appointmentType" value="online" checked> Online Appointment
                         </label>
                         <label>
-                            <input type="radio" name="appointment-type" value="clinic"> Clinic Appointment
+                            <input type="radio" name="appointmentType" value="clinic"> Clinic Appointment
                         </label>
                     </div>
 
-                    <a href="{{ route('successAppointment') }}"><button type="submit" class="btn btn-primary">Submit</button></a>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
     </form>
-
     <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const doctorList = document.getElementById('doctor-list'); // Updated ID
+    const doctorNameInput = document.getElementById('doctorName');
+    const appointmentDates = document.querySelectorAll('input[name="consultation_dates[]"]');
+    const timeSlotsContainer = document.querySelector('.time-slots');
+    const hiddenInput = document.getElementById('appointmentDT');
+    const dateTimeSection = document.getElementById('dateTimeContainers');
+    let currentDoctorId = null;
+    let userDoctorId = null; // This should be fetched from appointments table
 
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const doctorList = document.getElementById('doctor-list');
-    const originalDoctors = Array.from(doctorList.querySelectorAll('.doctor-card'));
-    const specialitySelect = document.getElementById('specialitys');
-    const dateTimeSection = document.getElementById('date-time-section');
-    const timeSlotsContainer = document.getElementById('timeSlots');
-    const appointmentDate = document.getElementById('appointmentDate');
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'selectedTimeSlot';
-    document.querySelector('form').appendChild(hiddenInput);
+    dateTimeSection.style.display = 'none';
 
-    appointmentDate.addEventListener('change', function() {
-    const doctorId = document.querySelector('.doctor-card.selected')?.dataset.doctorId;
-    const selectedDate = this.value;
-    if (doctorId && selectedDate) {
-        fetchDoctorTimes(doctorId, selectedDate).then(unavailableTimes => {
-            generateTimeSlots(unavailableTimes);
-        });
-    } else {
-        generateTimeSlots([]);
-    }
-});
+   
 
-    function filterDoctors() {
-        const selectedSpeciality = specialitySelect.value.toLowerCase();
-        originalDoctors.forEach(doctor => {
-            const doctorSpeciality = doctor.dataset.specialty.toLowerCase();
-            if (selectedSpeciality === "" || doctorSpeciality === selectedSpeciality) {
-                doctor.style.display = '';
-            } else {
-                doctor.style.display = 'none';
-            }
-        });
-    }
 
-    specialitySelect.addEventListener('change', filterDoctors);
+    document.getElementById('searchButton').addEventListener('click', function() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    [...doctorList.children].forEach(doctor => {
+        const doctorName = doctor.querySelector('.doctor-info strong').textContent.toLowerCase();
+        const doctorSpeciality = doctor.dataset.speciality ? doctor.dataset.speciality.toLowerCase() : ''; // Add a check here
 
-    appointmentDate.addEventListener('change', function() {
-        const doctorId = document.querySelector('.doctor-card.selected')?.dataset.doctorId;
-        const selectedDate = this.value;
-        if (doctorId && selectedDate) {
-            fetchDoctorTimes(doctorId, selectedDate).then(unavailableTimes => {
-                generateTimeSlots(unavailableTimes);
-            });
-        } else {
-            generateTimeSlots([]);
-        }
+        doctor.style.display = doctorName.includes(searchTerm) || doctorSpeciality.includes(searchTerm) ? '' : 'none';
     });
-
-    function fetchDoctorTimes(doctorId, date) {
-    return fetch(`/get-doctor-times/${doctorId}?date=${encodeURIComponent(date)}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Fetched data:', data);
-
-            // 确保 appointmentTimes 和 unavailableTimes 是数组
-            if (!Array.isArray(data.appointmentTimes)) {
-                console.error('appointmentTimes is not an array:', data.appointmentTimes);
-                data.appointmentTimes = []; // 默认空数组
-            }
-            if (!Array.isArray(data.unavailableTimes)) {
-                console.error('unavailableTimes is not an array:', data.unavailableTimes);
-                data.unavailableTimes = []; // 默认空数组
-            }
-
-            // 合并两个数组
-            const unavailableTimes = [...data.unavailableTimes, ...data.appointmentTimes];
-            return unavailableTimes;
-        })
-        .catch(error => {
-            console.error('Error fetching doctor times:', error);
-            return [];
-        });
-}
-
-
-function getUnavailableTimes(datesAndTimes, selectedDate) {
-        const unavailableTimes = [];
-        for (const entry of datesAndTimes) {
-            if (entry.date === selectedDate) {
-                unavailableTimes.push(...entry.timeSlots);
-            }
-        }
-        return unavailableTimes;
-    }
-
-
-    function generateTimeSlots(unavailableTimes) {
-    timeSlotsContainer.innerHTML = ''; // 清空现有时间槽
-
-    // 遍历从 09:00 到 16:30 的时间槽
-    for (let hour = 9; hour < 17; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
-            const formattedHour = hour.toString().padStart(2, '0');
-            const formattedMinute = minute.toString().padStart(2, '0');
-            const timeValue = `${formattedHour}:${formattedMinute}`;
-
-            const timeSlot = document.createElement('div');
-            timeSlot.className = 'time-slot';
-            timeSlot.textContent = timeValue;
-
-            // 检查时间槽是否在不可用时间数组中
-            if (unavailableTimes.includes(timeValue)) {
-                timeSlot.classList.add('full'); // 使用 full 类来表示不可用的时间槽
-                timeSlot.onclick = function() {
-                    // 对不可用时间槽不做任何操作
-                };
-            } else {
-                timeSlot.classList.add('available'); // 使用 available 类来表示可用的时间槽
-                timeSlot.onclick = function() {
-                    // 移除已选择的时间槽
-                    document.querySelectorAll('.time-slot.selected').forEach(slot => {
-                        slot.classList.remove('selected');
-                    });
-                    // 为当前点击的时间槽添加选中类
-                    this.classList.add('selected');
-                    updateHiddenInput();
-                };
-            }
-
-            timeSlotsContainer.appendChild(timeSlot);
-        }
-    }
-}
-
-
-function updateHiddenInput() {
-    const selectedSlot = timeSlotsContainer.querySelector('.time-slot.selected');
-    hiddenInput.value = selectedSlot ? JSON.stringify([selectedSlot.textContent]) : '[]';
-}
-
+});
 
 
     doctorList.addEventListener('click', function(e) {
@@ -291,59 +219,109 @@ function updateHiddenInput() {
             doctorList.querySelectorAll('.doctor-card').forEach(card => card.classList.remove('selected'));
             doctorCard.classList.add('selected');
 
-            const id = doctorCard.dataset.doctorId;
-            const selectedDate = appointmentDate.value;
-            if (selectedDate) {
-                fetchDoctorTimes(id)
-                    .then(doctorTimes => {
-                        const unavailableTimes = getUnavailableTimes(doctorTimes, selectedDate);
-                        generateTimeSlots(unavailableTimes);
-                    });
-            }
+            doctorNameInput.value = doctorCard.querySelector('.doctor-info strong').textContent;
+            currentDoctorId = doctorCard.dataset.doctorId;
+            userDoctorId = doctorCard.dataset.userDoctorId; // Ensure this value is correctly set for appointments
+
+            // Check the value of userDoctorId for debugging
+            console.log('Selected User Doctor ID:', userDoctorId); // Debugging line
 
             dateTimeSection.style.display = 'block';
+
+            appointmentDates.forEach(dateInput => {
+                dateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    if (selectedDate) {
+                        fetchDoctorTimes(userDoctorId, selectedDate).then(unavailableTimes => {
+                            generateTimeSlots(unavailableTimes);
+                        });
+                    }
+                });
+
+                // Trigger change event if the date is already set
+                if (dateInput.value) {
+                    dateInput.dispatchEvent(new Event('change'));
+                }
+            });
         }
     });
 
+    function fetchDoctorTimes(userDoctorId, date) {
+        console.log(`Fetching times for User Doctor ID: ${userDoctorId} on Date: ${date}`); // Debugging line
 
-
-    document.querySelectorAll('.doctor-card').forEach(card => {
-        card.addEventListener('click', function() {
-            document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
-            this.classList.add('selected');
-            dateTimeSection.style.display = 'block';
-            const doctorId = this.dataset.doctorId;
-            const selectedDate = appointmentDate.value;
-            if (doctorId && selectedDate) {
-                fetchDoctorTimes(doctorId, selectedDate).then(unavailableTimes => {
-                    generateTimeSlots(unavailableTimes);
-                });
-            }
+        return Promise.all([
+            fetch(`/get-doctor-unavailable-times/${currentDoctorId}?date=${encodeURIComponent(date)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Unavailable Times Response:', data); // Debugging line
+                    return data.unavailableTimes || [];
+                }),
+            fetch(`/get-doctor-appointments-times/${userDoctorId}?date=${encodeURIComponent(date)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Appointment Times Response:', data); // Debugging line
+                    return data.appointmentTimes || [];
+                })
+        ])
+        .then(([unavailableTimes, appointmentTimes]) => {
+            console.log('Combined Times:', [...unavailableTimes, ...appointmentTimes]); // Debugging line
+            return [...unavailableTimes, ...appointmentTimes];
+        })
+        .catch(err => {
+            console.error('Error fetching times:', err); // Error handling
+            return [];
         });
-    });
+    }
 
-    searchButton.addEventListener('click', function() {
-        const searchTerm = searchInput.value.toLowerCase();
-        originalDoctors.forEach(doctor => {
-            const doctorName = doctor.querySelector('.doctor-info strong').textContent.toLowerCase();
-            const doctorSpeciality = doctor.dataset.specialty.toLowerCase();
-            if (doctorName.includes(searchTerm) || doctorSpeciality.includes(searchTerm)) {
-                doctor.style.display = '';
-            } else {
-                doctor.style.display = 'none';
+    function generateTimeSlots(unavailableTimes) {
+        timeSlotsContainer.innerHTML = '';
+        for (let hour = 9; hour < 18; hour++) { // Adjusted to 6 PM
+            for (let minute = 0; minute < 60; minute += 30) {
+                const formattedHour = hour.toString().padStart(2, '0');
+                const formattedMinute = minute.toString().padStart(2, '0');
+                const timeValue = `${formattedHour}:${formattedMinute}`;
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.textContent = timeValue;
+
+                if (unavailableTimes.includes(timeValue)) {
+                    timeSlot.classList.add('full');
+                } else {
+                    timeSlot.classList.add('available');
+                    timeSlot.addEventListener('click', function() {
+                        document.querySelectorAll('.time-slot.selected').forEach(slot => slot.classList.remove('selected'));
+                        this.classList.add('selected');
+                        updateHiddenInput();
+                    });
+                }
+
+                timeSlotsContainer.appendChild(timeSlot);
             }
+        }
+    }
+
+    function updateHiddenInput() {
+        const containers = document.querySelectorAll('.date-time-container');
+        const result = Array.from(containers).map(container => {
+            const dateInput = container.querySelector('input[name="consultation_dates[]"]').value;
+            const selectedSlots = Array.from(container.querySelectorAll('.time-slot.selected'))
+                .map(slot => slot.textContent);
+
+            return {
+                date: dateInput,
+                timeSlots: selectedSlots
+            };
         });
+
+        hiddenInput.value = JSON.stringify(result);
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    appointmentDates.forEach(dateInput => {
+        dateInput.setAttribute('min', today);
     });
-
-
-const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayDate = `${yyyy}-${mm}-${dd}`;
-    appointmentDate.setAttribute('min', todayDate);
 });
-</script>
 
+</script>
 </body>
 </html>
